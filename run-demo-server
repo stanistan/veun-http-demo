@@ -1,4 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-go run github.com/cespare/reflex -d none -s -- go run ./cmd/demo-server
+go run github.com/cespare/reflex -d fancy -s -- sh -c '
+echo
+echo
+echo -- Restarting and adding whitespace --
+echo
+echo
+go run ./cmd/demo-server'
