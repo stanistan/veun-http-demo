@@ -10,7 +10,7 @@ import (
 	"github.com/stanistan/veun/vhttp/request"
 )
 
-func ComponentPicker(notFound http.Handler) request.Handler {
+func ComponentPicker() request.Handler {
 	return request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
 		// get our idx
 		idx, err := strconv.Atoi(r.URL.Query().Get("idx"))
@@ -19,7 +19,7 @@ func ComponentPicker(notFound http.Handler) request.Handler {
 		}
 
 		if idx > len(DefinedComponentHandlers)-1 {
-			return nil, notFound, nil
+			return nil, http.NotFoundHandler(), nil
 		}
 
 		h := DefinedComponentHandlers[idx]

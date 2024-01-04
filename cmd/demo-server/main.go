@@ -37,9 +37,7 @@ var (
 	hf = vhttp.HandlerFunc
 
 	notFound   = h(html(view.NotFoundRequestHandler()))
-	orNotFound = func(next http.Handler) http.Handler {
-		return handler.Checked(next, notFound)
-	}
+	fileServer = http.FileServer(http.FS(staticFiles))
 )
 
 func main() {
@@ -51,15 +49,14 @@ func main() {
 		},
 	)))
 
-	// 1.
 	mux := http.NewServeMux()
 
 	// our ajax clicked handler that gets hit by htmx
 	mux.Handle("/clicked", h(view.ClickTriggerHandler))
 
 	// components and raw components
-	mux.Handle("/component/raw", h(view.ComponentPicker(notFound)))
-	mux.Handle("/component", h(html(view.ComponentPicker(notFound))))
+	mux.Handle("/component/raw", h(view.ComponentPicker()))
+	mux.Handle("/component", h(html(view.ComponentPicker())))
 
 	mux.Handle("/components", h(request.Always(view.DefinedComponents)))
 
@@ -101,16 +98,7 @@ func main() {
 
 	mux.Handle("/lazy", h(html(view.LazyRequestHandler())))
 
-	mux.Handle("/", handler.Checked(
-		// 1. First we check our root page
-		handler.OnlyRoot(h(html(view.HomeViewHandler()))),
-
-		// 2. Then we see if we can find things in our static files
-		http.FileServer(http.FS(staticFiles)),
-
-		// 3. What to do with our NotFound
-		h(html(view.NotFoundRequestHandler())),
-	))
+	mux.Handle("/", handler.OnlyRoot(h(html(view.HomeViewHandler()))))
 
 	var addr string
 	if port := os.Getenv("PORT"); port != "" {
@@ -120,11 +108,20 @@ func main() {
 	}
 
 	s := &http.Server{
-		Addr:    addr,
-		Handler: mux,
+		Addr: addr,
+
+		// Our handler does a 404 fallback between the mux, & static files.
+		// we introduce a not-found handler as the last http.Handler to check.
+		Handler: handler.Checked(
+			mux,        // first we we serve our "routes"
+			fileServer, // if any of those 404 we check static files
+			notFound,   // if any of those 404 we use our notFound handler
+		),
 
 		// logging
-		ErrorLog: slog.NewLogLogger(slog.Default().Handler(), slog.LevelWarn),
+		ErrorLog: slog.NewLogLogger(
+			slog.Default().Handler(), slog.LevelWarn,
+		),
 
 		// timeouts
 		ReadTimeout:  1 * time.Second,
