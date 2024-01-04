@@ -7,10 +7,10 @@ import (
 	"strconv"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/vhttp"
+	"github.com/stanistan/veun/vhttp/request"
 )
 
-var ClickTriggerHandler = vhttp.HandlerFunc(
+var ClickTriggerHandler = request.HandlerFunc(
 	func(r *http.Request) (veun.AsView, http.Handler, error) {
 
 		count, err := strconv.Atoi(r.URL.Query().Get("count"))

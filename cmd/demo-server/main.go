@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/stanistan/veun"
 	"github.com/stanistan/veun/vhttp"
@@ -43,21 +44,22 @@ var (
 
 func main() {
 
-	slog.SetDefault(slog.New(slog.NewTextHandler(
+	slog.SetDefault(slog.New(slog.NewJSONHandler(
 		os.Stderr,
 		&slog.HandlerOptions{
 			Level: slog.LevelDebug,
 		},
 	)))
 
+	// 1.
 	mux := http.NewServeMux()
 
 	// our ajax clicked handler that gets hit by htmx
-	mux.Handle("/clicked", view.ClickTriggerHandler)
+	mux.Handle("/clicked", h(view.ClickTriggerHandler))
 
 	// components and raw components
-	mux.Handle("/component/raw", orNotFound(h(view.PickAComponent)))
-	mux.Handle("/component", orNotFound(h(html(view.PickAComponent))))
+	mux.Handle("/component/raw", h(view.ComponentPicker(notFound)))
+	mux.Handle("/component", h(html(view.ComponentPicker(notFound))))
 
 	mux.Handle("/components", h(request.Always(view.DefinedComponents)))
 
@@ -110,14 +112,28 @@ func main() {
 		h(html(view.NotFoundRequestHandler())),
 	))
 
-	s := &http.Server{
-		Addr:    ":8080",
-		Handler: mux,
+	var addr string
+	if port := os.Getenv("PORT"); port != "" {
+		addr = ":" + port
+	} else {
+		addr = ":8080"
 	}
 
-	slog.Info("starting server", "addr", ":8080")
+	s := &http.Server{
+		Addr:    addr,
+		Handler: mux,
+
+		// logging
+		ErrorLog: slog.NewLogLogger(slog.Default().Handler(), slog.LevelWarn),
+
+		// timeouts
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		IdleTimeout:  5 * time.Second,
+	}
+
+	slog.Info("starting server", "addr", addr)
 	if err := s.ListenAndServe(); err != nil {
-		slog.Error("server failed", "err", err)
-		panic(err)
+		slog.Error("server stopped", slog.String("err", err.Error()))
 	}
 }
