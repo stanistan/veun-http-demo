@@ -41,13 +41,7 @@ var (
 )
 
 func main() {
-
-	slog.SetDefault(slog.New(slog.NewJSONHandler(
-		os.Stderr,
-		&slog.HandlerOptions{
-			Level: slog.LevelDebug,
-		},
-	)))
+	initLogger()
 
 	mux := http.NewServeMux()
 
@@ -133,4 +127,20 @@ func main() {
 	if err := s.ListenAndServe(); err != nil {
 		slog.Error("server stopped", slog.String("err", err.Error()))
 	}
+}
+
+func initLogger() {
+	var logHandler slog.Handler
+	if os.Getenv("ENV") == "dev" {
+		logHandler = slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		})
+	} else {
+		logHandler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelInfo,
+		})
+	}
+
+	slog.SetDefault(slog.New(logHandler))
+
 }
