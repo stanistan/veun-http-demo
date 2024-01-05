@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/stanistan/veun"
+	"github.com/stanistan/veun/html"
 	"github.com/stanistan/veun/vhttp/request"
 )
 
@@ -31,16 +32,19 @@ func (v Lazy) View(ctx context.Context) (*veun.View, error) {
 
 	var placeholder veun.AsView
 	if v.Placeholder == nil {
-		placeholder = veun.Raw("<em>...loading...</em>")
+		placeholder = html.Em(nil, html.Text("...loading..."))
 	} else {
 		placeholder = v.Placeholder
 	}
 
 	if !v.UseTpl {
-		return Div(placeholder, Attrs{
-			"hx-get":     v.Endpoint,
-			"hx-trigger": "load delay:" + v.Delay,
-		}).View(ctx)
+		return html.Div(
+			html.Attrs{
+				"hx-get":     v.Endpoint,
+				"hx-trigger": "load delay:" + v.Delay,
+			},
+			placeholder,
+		).View(ctx)
 	}
 
 	return veun.V(veun.Template{

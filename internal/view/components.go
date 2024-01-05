@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/stanistan/veun"
+	"github.com/stanistan/veun/html"
 	"github.com/stanistan/veun/vhttp/request"
 )
 
@@ -28,11 +29,11 @@ func ComponentPicker() request.Handler {
 }
 
 func ComponentLink(idx int) veun.AsView {
-	return el("div",
-		Attrs{"class": "component-permalink"},
-		el("a",
-			Attrs{"href": fmt.Sprintf("/component?idx=%d", idx)},
-			veun.Raw("premalink"),
+	return html.Div(
+		html.Attrs{"class": "component-permalink"},
+		html.A(
+			html.Attrs{"href": fmt.Sprintf("/component?idx=%d", idx)},
+			html.Text("premalink"),
 		),
 	)
 }
@@ -59,9 +60,8 @@ func Delazy(delay string, tpl bool) Component {
 		Delay:    delay,
 		UseTpl:   tpl,
 		Placeholder: veun.Views{
-			veun.Raw("<em>...loading...</em>"),
-			veun.Raw(" "),
-			veun.Raw(fmt.Sprintf("incurring a %s delay", delay)),
+			html.El("em", nil, html.Text("...loading...")),
+			veun.Raw(fmt.Sprintf(" incurring a %s delay", delay)),
 		},
 	}
 }
