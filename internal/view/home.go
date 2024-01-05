@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stanistan/veun"
+	"github.com/stanistan/veun-http-demo/internal/view/page"
 	"github.com/stanistan/veun/vhttp/request"
 )
 
@@ -39,6 +40,6 @@ func (v home) View(_ context.Context) (*veun.View, error) {
 	}), nil
 }
 
-func (m home) SetHTMLData(d *HTMLData) {
+func (m home) SetPageData(d *page.Data) {
 	d.Title = "Home"
 }

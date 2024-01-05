@@ -15,6 +15,7 @@ import (
 	"github.com/stanistan/veun/vhttp/request"
 
 	"github.com/stanistan/veun-http-demo/internal/view"
+	"github.com/stanistan/veun-http-demo/internal/view/page"
 )
 
 var (
@@ -25,7 +26,7 @@ var (
 )
 
 func html(r request.Handler) request.Handler {
-	return view.HTML(r, view.HTMLData{
+	return page.Handler(r, page.Data{
 		Title:    "veun-http (demo)",
 		CSSPath:  cssPath,
 		HTMXPath: htmxPath,
