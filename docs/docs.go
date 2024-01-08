@@ -5,11 +5,8 @@ import (
 )
 
 var (
-	//go:embed demo-server
-	DemoServer embed.FS
-
-	//go:embed internal
-	Internal embed.FS
+	//go:embed demo-server internal
+	Docs embed.FS
 
 	//go:embed index.md
 	Index []byte

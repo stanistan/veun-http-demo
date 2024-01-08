@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/stanistan/veun/vhttp"
+	"github.com/stanistan/veun/vhttp/handler"
 )
 
 func main() {
@@ -21,7 +24,7 @@ func main() {
 
 	s := &http.Server{
 		Addr:    addr,
-		Handler: server(), // server! we'll fill this in the next one
+		Handler: server(),
 
 		// logging
 		ErrorLog: slog.NewLogLogger(
@@ -38,5 +41,22 @@ func main() {
 	if err := s.ListenAndServe(); err != nil {
 		slog.Error("server stopped", slog.String("err", err.Error()))
 	}
+
+}
+
+var (
+	h  = vhttp.Handler
+	hf = vhttp.HandlerFunc
+)
+
+func server() http.Handler {
+	mux := http.NewServeMux()
+
+	mux.Handle("/docs", h(htmlPage(docsIndex)))
+	mux.Handle("/docs/", http.StripPrefix("/docs/", h(htmlPage(docsPage))))
+
+	mux.Handle("/", handler.OnlyRoot(h(htmlPage(index))))
+
+	return handler.Checked(mux, staticFileServer())
 
 }

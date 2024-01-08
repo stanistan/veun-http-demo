@@ -2,12 +2,18 @@
 
 _This is a demo server using the [veun][veun] library._
 
+---
+
 ## Docs
 
-The server itself is a work in progress being implemented a "[literate
-programming][lit-prog]", the documentation _is_ the code.
+You can see the source for this repo at <https://github.com/stanistan/veun-http-demo>.
 
-**This is still a WIP.**
+The server itself is being implemented a "[literate
+programming][lit-prog]" style, the documentation below
+_is_ the code to run what you're currently seeing on the
+this website.
+
+This is a work in progress.
 
 [veun]: https://github.com/stanistan/veun
 [lit-prog]: https://en.wikipedia.org/wiki/Literate_programming

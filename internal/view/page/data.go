@@ -2,8 +2,8 @@ package page
 
 type Data struct {
 	Title    string
-	CSSPath  string
-	HTMXPath string
+	CSSFiles []string
+	JSFiles  []string
 }
 
 type DataMutator interface {
