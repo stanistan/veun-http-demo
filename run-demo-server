@@ -1,10 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-ENV=dev go run github.com/cespare/reflex -d none -s -- sh -c '
-echo
-echo
-echo -- Restarting and adding whitespace --
-echo
-echo
-go run ./cmd/demo-server'
+ENV=dev \
+  go run github.com/cespare/reflex \
+  -d none -c reflex.conf
