@@ -13,7 +13,12 @@ programming][lit-prog]" style, the documentation below
 _is_ the code to run what you're currently seeing on the
 this website.
 
-This is a work in progress.
+Unlike a tutorial, this documentation is meant to be traversed
+more like _code_ and is attempting to demonstrate the live
+state of a program and why it is the way it is vs the steps
+it took to construct it.
+
+_This is a work in progress._
 
 [veun]: https://github.com/stanistan/veun
 [lit-prog]: https://en.wikipedia.org/wiki/Literate_programming
