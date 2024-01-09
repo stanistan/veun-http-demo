@@ -131,7 +131,7 @@ So `/docs/$THING` maps to `/docs/$THING.go.md` in our repo, else we 404.
 ```go
 var docsPage = request.HandlerFunc(
 	func(r *http.Request) (veun.AsView, http.Handler, error) {
-		if r.URL.Path == "/" {
+		if r.URL.Path == "" {
 			//
 			// N.B. if we have no slug do the index!
 			return docsIndex.ViewForRequest(r)
