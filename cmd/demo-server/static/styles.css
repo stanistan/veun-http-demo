@@ -1,7 +1,10 @@
 body {
   font-family: monospace;
-  max-width: 50em;
   line-height: 1.5em;
+}
+
+article {
+  max-width: 50em;
 }
 
 .component { }
@@ -43,6 +46,31 @@ pre {
 hr {
   border: 1px dashed #f3f3f3;
   margin: 2px 0;
+}
+
+.doc-tree {
+  margin: 8px 0;
+}
+
+.doc-tree ul {
+  margin: 0;
+  padding: 4px;
+  border-left: 9px solid #f3f3f3;
+}
+
+.doc-tree a {
+  font-weight: bold;
+}
+
+.doc-tree ul > li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.doc-page-cols {
+  display: flex;
+  gap: 10px;
 }
 
 /**

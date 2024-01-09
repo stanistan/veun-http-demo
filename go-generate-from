@@ -1,7 +1,9 @@
 #!/bin/sh
+set -euo pipefail
 
 prefix=docs/
 filename="$1"
+package="./$(dirname ${filename#"$prefix"})"
 
-go generate "./$(dirname ${filename#"$prefix"})"
-
+go generate "$package"
+go build "$package"

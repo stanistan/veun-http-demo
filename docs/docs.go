@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	//go:embed demo-server internal
+	//go:embed cmd internal
 	Docs embed.FS
 
 	//go:embed index.md
