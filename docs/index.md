@@ -18,7 +18,7 @@ it took to construct it.
 
 _This is a work in progress._
 
-The source for is here:
+The source is here:
 <https://github.com/stanistan/veun-http-demo>
 
 [veun]: https://github.com/stanistan/veun
