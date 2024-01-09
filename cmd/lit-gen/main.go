@@ -16,42 +16,50 @@ import (
 
 func main() {
 	var (
-		root      = flag.String("root", "", "Root Directory")
-		outputDir = flag.String("o", "", "Output Directory")
-		pkg       = flag.String("pkg", os.Getenv("GOPACKAGE"), "go package")
+		// rootPath directory specifies where the project root is. If not specified
+		// we will find it by looking for the go.mod file from the current working
+		// directory.
+		rootPath = flag.String("root", "", "Root Directory")
+
+		// docsPath is the relative path from the root to the docs. defaults to docs.
+		docsPath = flag.String("docs", "docs", "relative path from root to docs")
+
+		// pkgName is the package we are going to build. Defaults to GOPACKAGE env var.
+		pkgName = flag.String("pkg", os.Getenv("GOPACKAGE"), "go package")
 	)
+
 	flag.Parse()
 
-	if *root == "" {
-		wd, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-		}
-		*root = wd
-	} else {
-		abs, err := filepath.Abs(*root)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		*root = abs
-	}
-
-	if *outputDir == "" {
-		log.Fatal("-o (output directory) is required")
-	} else {
-		abs, err := filepath.Abs(*outputDir)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		*outputDir = abs
-	}
-
-	log.Printf("[attempting to generate go from *.go.md files in=%s out=%s]", *root, *outputDir)
-
-	err := walk(*root, generate(*root, *outputDir, *pkg))
+	// current working directory is required.
+	cwd, err := os.Getwd()
 	if err != nil {
+		log.Fatal(err)
+	}
+
+	rp := cwd
+	for *rootPath == "" {
+		if rp == "/" {
+			log.Fatal("root volume")
+		}
+		if _, err := os.Stat(path.Join(rp, "go.mod")); err == nil {
+			*rootPath = rp
+			break
+		} else {
+			rp = filepath.Dir(rp)
+		}
+	}
+
+	outputDir := cwd
+	rel, err := filepath.Rel(*rootPath, cwd)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	docRoot := filepath.Join(*rootPath, *docsPath, rel)
+
+	fmt.Printf("[lit-gen] :: source=%s dest=%s\n", docRoot, outputDir)
+
+	if err := walk(docRoot, generate(docRoot, outputDir, *pkgName)); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -59,7 +67,6 @@ func main() {
 func walk(root string, genF func(string) error) error {
 	return filepath.WalkDir(root, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
-			log.Printf("path=%s err=%s", path, err)
 			return nil
 		}
 
@@ -75,7 +82,6 @@ func walk(root string, genF func(string) error) error {
 
 func generate(root, destination, pkg string) func(string) error {
 	return func(in string) error {
-		log.Printf("-> %s", in)
 
 		f, err := os.Open(in)
 		if err != nil {
@@ -83,8 +89,9 @@ func generate(root, destination, pkg string) func(string) error {
 		}
 		defer f.Close()
 
-		dest := path.Join(destination, strings.TrimSuffix(strings.TrimPrefix(in, root), ".md"))
-		log.Printf("  :: destination=%s", dest)
+		fmt.Printf("[lit-gen] -> %s\n", filepath.Base(in))
+
+		dest := filepath.Join(destination, strings.TrimSuffix(strings.TrimPrefix(in, root), ".md"))
 
 		out, err := os.Create(dest)
 		if err != nil {
@@ -125,7 +132,6 @@ func generate(root, destination, pkg string) func(string) error {
 			return fmt.Errorf("scanning: %w", err)
 		}
 
-		log.Printf("  :: Formatting")
 		formatted, err := format.Source(w.Bytes())
 		if err != nil {
 			return fmt.Errorf("formatting error: %w", err)
@@ -136,7 +142,7 @@ func generate(root, destination, pkg string) func(string) error {
 			return fmt.Errorf("writing file: %w", err)
 		}
 
-		log.Printf("  :: DONE")
+		fmt.Printf("[lit-gen] -> DONE\n")
 		return nil
 	}
 }

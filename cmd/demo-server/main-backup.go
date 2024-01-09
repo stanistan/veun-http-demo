@@ -1,6 +1,6 @@
 package main
 
-//go:generate go run github.com/stanistan/veun-http-demo/cmd/lit-gen -root ../../docs/demo-server -o .
+//go:generate go run github.com/stanistan/veun-http-demo/cmd/lit-gen
 
 import (
 	"context"
