@@ -4,9 +4,7 @@ _This is a demo server using the [veun][veun] library._
 
 ---
 
-## Docs
-
-You can see the source for this repo at <https://github.com/stanistan/veun-http-demo>.
+## What is this?
 
 The server itself is being implemented a "[literate
 programming][lit-prog]" style, the documentation below
@@ -19,6 +17,9 @@ state of a program and why it is the way it is vs the steps
 it took to construct it.
 
 _This is a work in progress._
+
+The source for is here:
+<https://github.com/stanistan/veun-http-demo>
 
 [veun]: https://github.com/stanistan/veun
 [lit-prog]: https://en.wikipedia.org/wiki/Literate_programming

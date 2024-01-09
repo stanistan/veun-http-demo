@@ -57,8 +57,9 @@ func docFilesIndex() veun.AsView {
 	}
 
 	return html.Section(nil,
-		html.H3(nil, html.Text("Articles")),
-		html.Ol(nil, filenames...),
+		veun.Raw("<hr />"),
+		html.H3(nil, html.Text("docs/")),
+		html.Ul(nil, filenames...),
 	)
 }
 

@@ -3,6 +3,12 @@
 The view that we've built is made for composition,
 but so is the request handler!
 
+We use this directly in our [`htmlPage` function][html-page].
+
+## Our dependencies
+
+Pretty standard for something dealing with an http request.
+
 ```go
 import (
 	"net/http"
@@ -12,20 +18,12 @@ import (
 )
 ```
 
+## The Handler
+
 We export a `Handler` function that follows a middleware-like pattern,
-taking a handler and returning a handler.
-
-For now given that we do some really simple page construction in the
-server this is totally fine, but it can be changed in the future to
-take variadic `Option`s do do configuration.
-
-Handler composition is a little verbose (from the function signature),
-but really really nice once you're using it in practice.
-
-Once again, you can see that when we're looking at any kind of code
-it ends up simply being function/interface composition.
-
-There are small nuances in the way this specific middleware is implemented.
+taking a handler and returning a handler. Handler composition is a little
+verbose (from the function signature), but really really nice once you're
+using it in practice.
 
 ```go
 func Handler(rh request.Handler, data Data) request.Handler {
@@ -34,7 +32,14 @@ func Handler(rh request.Handler, data Data) request.Handler {
 
 ---
 
-1. It _always_ bubbles up the `next` handler to the caller, regardless of
+Once again, you can see that when we're looking at any kind of code
+it ends up simply being function/interface composition.
+
+There are small nuances in the way this specific middleware is implemented.
+
+### Errors and handlers
+
+It _always_ bubbles up the `next` handler to the caller, regardless of
 if there was an error or not.
 
 
@@ -45,9 +50,12 @@ if err != nil {
 }
 ```
 
-2. It fully respects _no view_. If we passed this on to `View`, we would
+### Middlewares
+
+It fully respects _no view_. If we passed this on to `View`, we would
 always be rendering an empty html page and 404s and redirects
-would kind of be busted.
+would kind of be busted. This also allows for a `request.Handler` to
+produce _anything_.
 
 ```go
 if v == nil {
@@ -55,7 +63,9 @@ if v == nil {
 }
 ```
 
-3. And if we get something to work with, we wrap with our page, and
+### Nice defaults
+
+And if we get something to work with, we wrap with our page, and
 see check for that `DataMutator` hook.
 
 ```go
@@ -71,6 +81,5 @@ End `Handler`:
 }
 ```
 
-We use this directly in our [`htmlPage` function][html-page].
 
 [html-page]: /docs/demo-server/html-page
