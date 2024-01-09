@@ -67,7 +67,7 @@ func main() {
 func walk(root string, genF func(string) error) error {
 	return filepath.WalkDir(root, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
-			return nil
+			return err
 		}
 
 		if strings.HasSuffix(path, ".go.md") && !info.IsDir() {
@@ -134,7 +134,7 @@ func generate(root, destination, pkg string) func(string) error {
 
 		formatted, err := format.Source(w.Bytes())
 		if err != nil {
-			return fmt.Errorf("formatting error: %w", err)
+			return fmt.Errorf("%s formatting error: %w", in, err)
 		}
 
 		_, err = out.Write(formatted)
