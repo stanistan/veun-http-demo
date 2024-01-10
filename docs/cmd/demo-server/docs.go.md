@@ -109,8 +109,8 @@ var docsPage = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Hand
 
 	return html.Div(
 		html.Attrs{"class": "doc-page-cols"},
-		html.Div(nil, md.View(bs)),
 		html.Div(nil, docFilesIndex()),
+		html.Div(nil, md.View(bs)),
 	), nil, nil
 })
 ```

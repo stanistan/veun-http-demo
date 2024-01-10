@@ -43,8 +43,6 @@ var index = request.Always(veun.Views{
 
 var docsPage = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
 	if r.URL.Path == "" {
-		//
-		// N.B. if we have no slug do the index!
 		return docsIndex.ViewForRequest(r)
 	}
 
@@ -55,9 +53,7 @@ var docsPage = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Hand
 
 	return html.Div(
 		html.Attrs{"class": "doc-page-cols"},
-		html.Div(nil, md.View(bs)),
 		html.Div(nil, docFilesIndex()),
+		html.Div(nil, md.View(bs)),
 	), nil, nil
-
-	//return md.View(bs), nil, nil
 })
