@@ -7,10 +7,6 @@ using the `embed` package.
 And if we want to render one of these documents we can use
 the `md.View()` that we create [here][md-view].
 
-## Requirements
-
-As usual we need to import some things to get this to work.
-
 ```go
 import (
     "net/http"
@@ -47,19 +43,19 @@ more complicated, we can drop it in its own template.
 
 ```go
 func treeView(n docs.Node) veun.AsView {
-    var children []veun.AsView
-    for _, child := range n.Children {
-        children = append(children, html.Li(nil, treeView(child)))
-    }
+	var children []veun.AsView
+	for _, name := range n.Sorted() {
+		children = append(children, html.Li(nil, treeView(n.Children[name])))
+	}
 
-    name, href := n.LinkInfo()
-    if len(children) == 0 {
-        return html.Div(nil, html.A(html.Attrs{"href": href}, html.Text(name)))
-    }
+	name, href := n.LinkInfo()
+	if len(children) == 0 {
+		return html.Div(nil, html.A(html.Attrs{"href": href}, html.Text(name)))
+	}
 
-    return html.Div(nil,
-        html.Div(nil, html.Text(name + "/")),
-        html.Ul(nil, children...))
+	return html.Div(nil,
+		html.Div(nil, html.Text(name+"/")),
+		html.Ul(nil, children...))
 }
 
 func docFilesIndex() veun.AsView {

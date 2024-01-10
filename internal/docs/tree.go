@@ -4,6 +4,7 @@ package docs
 import (
 	"io/fs"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 
@@ -18,6 +19,18 @@ type Node struct {
 
 func (n *Node) insert(path string) {
 	n.insertPath(strings.Split(path, string(filepath.Separator)), 0)
+}
+
+func (n *Node) Sorted() []string {
+	keys := make([]string, len(n.Children))
+	i := 0
+	for k := range n.Children {
+		keys[i] = k
+		i++
+	}
+
+	sort.Strings(keys)
+	return keys
 }
 
 func (n *Node) LinkInfo() (string, string) {

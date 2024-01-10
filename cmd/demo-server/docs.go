@@ -15,8 +15,8 @@ import (
 
 func treeView(n docs.Node) veun.AsView {
 	var children []veun.AsView
-	for _, child := range n.Children {
-		children = append(children, html.Li(nil, treeView(child)))
+	for _, name := range n.Sorted() {
+		children = append(children, html.Li(nil, treeView(n.Children[name])))
 	}
 
 	name, href := n.LinkInfo()
