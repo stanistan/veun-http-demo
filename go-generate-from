@@ -6,4 +6,4 @@ filename="$1"
 package="./$(dirname ${filename#"$prefix"})"
 
 go generate "$package"
-go build "$package"
+go build -o "tmp/$(basename $package)" $package
