@@ -91,7 +91,10 @@ func generate(root, destination, pkg string) func(string) error {
 
 		fmt.Printf("[lit-gen] -> %s\n", filepath.Base(in))
 
-		dest := filepath.Join(destination, strings.TrimSuffix(strings.TrimPrefix(in, root), ".md"))
+		dest := filepath.Join(
+			destination,
+			strings.TrimSuffix(strings.TrimPrefix(in, root), ".go.md"),
+		) + ".generated.go"
 
 		out, err := os.Create(dest)
 		if err != nil {

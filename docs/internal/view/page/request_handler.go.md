@@ -3,8 +3,6 @@
 The view that we've built is made for composition,
 but so is the request handler!
 
-We use this directly in our [`htmlPage` function][html-page].
-
 ## Our dependencies
 
 Pretty standard for something dealing with an http request.
@@ -25,9 +23,13 @@ taking a handler and returning a handler. Handler composition is a little
 verbose (from the function signature), but really really nice once you're
 using it in practice.
 
+I want to 1) Pass in defaults for the page/title, css, and js from the server
+and have it be configured and not hard-coded. And 2) maintain a _middlware-ish_ style of composition.
+
 ```go
-func Handler(rh request.Handler, data Data) request.Handler {
-	return request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
+func Handler(data Data) func(request.Handler) request.Handler {
+    return func(rh request.Handler) request.Handler {
+        return request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
 ```
 
 ---
@@ -77,9 +79,12 @@ return View(v, data), next, nil
 End `Handler`:
 
 ```go
-	})
+        })
+    }
 }
 ```
 
 
-[html-page]: /docs/demo-server/html-page
+
+
+[html-page]: /docs/cmd/demo-server/html-page

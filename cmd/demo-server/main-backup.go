@@ -25,7 +25,7 @@ func serverOld() http.Handler {
 
 	// components and raw components
 	mux.Handle("/component/raw", h(view.ComponentPicker()))
-	mux.Handle("/component", h(htmlPage(view.ComponentPicker())))
+	mux.Handle("/component", h(html(view.ComponentPicker())))
 
 	mux.Handle("/components", h(request.Always(view.DefinedComponents)))
 
@@ -65,19 +65,19 @@ func serverOld() http.Handler {
 		return veun.Raw(r.URL.Query().Get("in")), nil, nil
 	}))
 
-	mux.Handle("/lazy", h(htmlPage(view.LazyRequestHandler())))
+	mux.Handle("/lazy", h(html(view.LazyRequestHandler())))
 
-	mux.Handle("/docs", h(htmlPage(docsIndex)))
-	mux.Handle("/docs/", http.StripPrefix("/docs/", h(htmlPage(docsPage))))
+	mux.Handle("/docs", h(html(docsIndex)))
+	mux.Handle("/docs/", http.StripPrefix("/docs/", h(html(docsPage))))
 
-	// mux.Handle("/", handler.OnlyRoot(h(htmlPage(view.HomeViewHandler()))))
-	mux.Handle("/", handler.OnlyRoot(h(htmlPage(index))))
+	// mux.Handle("/", handler.OnlyRoot(h(html(view.HomeViewHandler()))))
+	mux.Handle("/", handler.OnlyRoot(h(html(index))))
 
 	// Our handler does a 404 fallback between the mux, & static files.
 	// we introduce a not-found handler as the last http.Handler to check.
 	return handler.Checked(
-		mux,                // first we we serve our "routes"
-		staticFileServer(), // if any of those 404 we check static files
-		h(htmlPage(view.NotFoundRequestHandler())), // if any of those 404 we use our notFound handler
+		mux,                                    // first we we serve our "routes"
+		staticFileServer(),                     // if any of those 404 we check static files
+		h(html(view.NotFoundRequestHandler())), // if any of those 404 we use our notFound handler
 	)
 }

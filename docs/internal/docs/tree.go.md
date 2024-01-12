@@ -16,7 +16,7 @@ import (
 )
 ```
 
-## The node
+## Node
 
 That seems mostly fine to represent what we need.
 
@@ -26,27 +26,13 @@ type Node struct {
 	Href     string          `json:"href"`
 	Children map[string]Node `json:"children,omitempty"`
 }
+```
 
+### Tree Construction
+
+```go
 func (n *Node) insert(path string) {
 	n.insertPath(strings.Split(path, string(filepath.Separator)), 0)
-}
-
-func (n *Node) SortedKeys() []string {
-	keys := make([]string, len(n.Children))
-	i := 0
-	for k := range n.Children {
-		keys[i] = k
-		i++
-	}
-
-	sort.Strings(keys)
-	return keys
-}
-
-func (n *Node) LinkInfo() (string, string) {
-    name := strings.TrimSuffix(n.Name, ".go.md")
-    href := filepath.Join("/docs", n.Href, name)
-    return name, href
 }
 
 func (n *Node) insertPath(pieces []string, i int) {
@@ -70,6 +56,28 @@ func (n *Node) insertPath(pieces []string, i int) {
 
     node.insertPath(pieces, i + 1)
     n.Children[name] = node
+}
+```
+
+### Lookup, links, etc
+
+```go
+func (n *Node) SortedKeys() []string {
+	keys := make([]string, len(n.Children))
+	i := 0
+	for k := range n.Children {
+		keys[i] = k
+		i++
+	}
+
+	sort.Strings(keys)
+	return keys
+}
+
+func (n *Node) LinkInfo() (string, string) {
+    name := strings.TrimSuffix(n.Name, ".go.md")
+    href := filepath.Join("/docs", n.Href, name)
+    return name, href
 }
 ```
 

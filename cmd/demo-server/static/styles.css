@@ -4,6 +4,10 @@ body {
   margin: 0;
 }
 
+a {
+  color: blue;
+}
+
 article {
   max-width: 50em;
   margin: 8px;
@@ -62,6 +66,13 @@ hr {
 
 .doc-tree a {
   font-weight: bold;
+}
+
+.doc-tree .current {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: inherit;
 }
 
 .doc-tree ul > li {

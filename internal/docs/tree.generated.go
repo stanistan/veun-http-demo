@@ -21,24 +21,6 @@ func (n *Node) insert(path string) {
 	n.insertPath(strings.Split(path, string(filepath.Separator)), 0)
 }
 
-func (n *Node) SortedKeys() []string {
-	keys := make([]string, len(n.Children))
-	i := 0
-	for k := range n.Children {
-		keys[i] = k
-		i++
-	}
-
-	sort.Strings(keys)
-	return keys
-}
-
-func (n *Node) LinkInfo() (string, string) {
-	name := strings.TrimSuffix(n.Name, ".go.md")
-	href := filepath.Join("/docs", n.Href, name)
-	return name, href
-}
-
 func (n *Node) insertPath(pieces []string, i int) {
 	if len(pieces[i:]) == 0 {
 		return
@@ -60,6 +42,24 @@ func (n *Node) insertPath(pieces []string, i int) {
 
 	node.insertPath(pieces, i+1)
 	n.Children[name] = node
+}
+
+func (n *Node) SortedKeys() []string {
+	keys := make([]string, len(n.Children))
+	i := 0
+	for k := range n.Children {
+		keys[i] = k
+		i++
+	}
+
+	sort.Strings(keys)
+	return keys
+}
+
+func (n *Node) LinkInfo() (string, string) {
+	name := strings.TrimSuffix(n.Name, ".go.md")
+	href := filepath.Join("/docs", n.Href, name)
+	return name, href
 }
 
 var Tree = sync.OnceValue(func() Node {

@@ -40,27 +40,41 @@ This can start out using the `veun/html` package since we don't _exactly_ know w
 we're going to do with this (to render a simple list). But once this gets a bit
 more complicated, we can drop it in its own template.
 
+```go
+func docTree(current string) veun.AsView {
+    return el.Div().
+        Class("doc-tree").
+        Content(treeView(docs.Tree(), current))
+}
+```
+
+And our tree view:
 
 ```go
-func treeView(n docs.Node) veun.AsView {
+func treeView(n docs.Node, current string) veun.AsView {
 	var children []veun.AsView
 	for _, name := range n.SortedKeys() {
-		children = append(children, el.Li().Content(treeView(n.Children[name])))
+		children = append(children, el.Li().Content(
+			treeView(n.Children[name], current),
+		))
 	}
 
 	name, href := n.LinkInfo()
 	if len(children) == 0 {
-        return el.Div().Content(el.A().Attr("href", href).InnerText(name))
+        // HACK
+		if ("/docs/" + current) == href {
+            return el.Div().Class("current").InnerText(name)
+		}
+		return el.Div().
+            Content(
+                el.A().Attr("href", href).InnerText(name),
+		)
 	}
 
-    return el.Div().Content(
-        el.Div().InnerText(name + "/"),
-        el.Ul().Content(children...),
-    )
-}
-
-func docFilesIndex() veun.AsView {
-    return el.Div().Class("doc-tree").Content(treeView(docs.Tree()))
+	return el.Div().Content(
+		el.Div().InnerText(name+"/"),
+		el.Ul().Content(children...),
+	)
 }
 ```
 
@@ -72,7 +86,7 @@ the actual HTML page we're going to look at for the indexes.
 #### Docs Index
 
 ```go
-var docsIndex = request.Always(docFilesIndex())
+var docsIndex = request.Always(docTree(""))
 ```
 
 #### Home Page
@@ -81,7 +95,7 @@ var docsIndex = request.Always(docFilesIndex())
 var index = request.Always(veun.Views{
     md.View(static.Index),
     veun.Raw("<hr />"),
-    docFilesIndex(),
+    docTree(""),
 })
 ```
 
@@ -105,10 +119,10 @@ var docsPage = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Hand
 	}
 
     return el.Div().Class("doc-page-cols").Content(
-        el.Div().Content(docFilesIndex()),
+        el.Div().Content(docTree(r.URL.Path)),
         el.Div().Content(md.View(bs)),
     ), nil, nil
 })
 ```
 
-[md-view]: /docs/internal/view/md/1-view
+[md-view]: /docs/internal/view/md/view
