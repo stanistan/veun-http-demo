@@ -5,8 +5,12 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
+ENV GOOS=linux
+ENV GOARCH=amd64
+
 COPY . .
-RUN GOOS=linux GOARCH=amd64 go build -o veun-http-demo ./cmd/demo-server
+RUN go generate ./...
+RUN go build -o veun-http-demo ./cmd/demo-server
 
 FROM scratch
 COPY --from=app /app/veun-http-demo /veun-http-demo

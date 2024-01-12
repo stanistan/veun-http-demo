@@ -1,4 +1,7 @@
 Dockerfile
 README.md
 run-demo-server
+go-generate-from
+reflex.conf
+*.generated.go
 bin/*
