@@ -12,7 +12,7 @@ import (
     "net/http"
 
     "github.com/stanistan/veun"
-    "github.com/stanistan/veun/html"
+    "github.com/stanistan/veun/el"
     "github.com/stanistan/veun/vhttp/request"
 
     static "github.com/stanistan/veun-http-demo/docs"
@@ -44,22 +44,23 @@ more complicated, we can drop it in its own template.
 ```go
 func treeView(n docs.Node) veun.AsView {
 	var children []veun.AsView
-	for _, name := range n.Sorted() {
-		children = append(children, html.Li(nil, treeView(n.Children[name])))
+	for _, name := range n.SortedKeys() {
+		children = append(children, el.Li().Content(treeView(n.Children[name])))
 	}
 
 	name, href := n.LinkInfo()
 	if len(children) == 0 {
-		return html.Div(nil, html.A(html.Attrs{"href": href}, html.Text(name)))
+        return el.Div().Content(el.A().Attr("href", href).InnerText(name))
 	}
 
-	return html.Div(nil,
-		html.Div(nil, html.Text(name+"/")),
-		html.Ul(nil, children...))
+    return el.Div().Content(
+        el.Div().InnerText(name + "/"),
+        el.Ul().Content(children...),
+    )
 }
 
 func docFilesIndex() veun.AsView {
-	return html.Div(html.Attrs{"class": "doc-tree"}, treeView(docs.Tree()))
+    return el.Div().Class("doc-tree").Content(treeView(docs.Tree()))
 }
 ```
 
@@ -103,11 +104,10 @@ var docsPage = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Hand
 		return nil, http.NotFoundHandler(), nil
 	}
 
-	return html.Div(
-		html.Attrs{"class": "doc-page-cols"},
-		html.Div(nil, docFilesIndex()),
-		html.Div(nil, md.View(bs)),
-	), nil, nil
+    return el.Div().Class("doc-page-cols").Content(
+        el.Div().Content(docFilesIndex()),
+        el.Div().Content(md.View(bs)),
+    ), nil, nil
 })
 ```
 

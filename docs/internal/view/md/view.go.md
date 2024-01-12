@@ -11,7 +11,7 @@ import (
 	"html/template"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/html"
+	"github.com/stanistan/veun/el"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
@@ -86,7 +86,7 @@ HTML around our generated markdown-- like an `<article>`.
 
 ```go
 func View(bs []byte) veun.AsView {
-	return html.Article(nil, view{Bytes: bs})
+    return el.Article().Content(view{Bytes: bs})
 }
 ```
 

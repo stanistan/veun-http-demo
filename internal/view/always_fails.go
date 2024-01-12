@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/html"
+	"github.com/stanistan/veun/el"
 )
 
 type AlwaysFails struct {
@@ -31,7 +31,7 @@ func (v AlwaysFails) View(_ context.Context) (*veun.View, error) {
 
 func (v AlwaysFails) ViewForError(ctx context.Context, err error) (veun.AsView, error) {
 	return veun.Views{
-		html.Strong(nil, html.Text("Error Inline:")),
+		el.Strong().InnerText("Error Inline:"),
 		niceError(err),
 	}, nil
 }

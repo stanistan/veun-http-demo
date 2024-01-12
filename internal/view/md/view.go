@@ -7,7 +7,7 @@ import (
 	"html/template"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/html"
+	"github.com/stanistan/veun/el"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
@@ -43,5 +43,5 @@ func (v view) View(_ context.Context) (*veun.View, error) {
 }
 
 func View(bs []byte) veun.AsView {
-	return html.Article(nil, view{Bytes: bs})
+	return el.Article().Content(view{Bytes: bs})
 }

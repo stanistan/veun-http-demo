@@ -31,7 +31,7 @@ func (n *Node) insert(path string) {
 	n.insertPath(strings.Split(path, string(filepath.Separator)), 0)
 }
 
-func (n *Node) Sorted() []string {
+func (n *Node) SortedKeys() []string {
 	keys := make([]string, len(n.Children))
 	i := 0
 	for k := range n.Children {

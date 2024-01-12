@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/html"
+	"github.com/stanistan/veun/el"
 )
 
 type Component interface {
@@ -60,7 +60,7 @@ func (v component) ViewForError(ctx context.Context, err error) (veun.AsView, er
 	return component{
 		Name: v.Name,
 		Body: veun.Views{
-			html.Div(nil, html.Strong(nil, html.Text("Error Captured:"))),
+			el.Div().Content(el.Strong().InnerText("Error Captured:")),
 			niceError(err),
 		},
 		BodyClass: "error",
@@ -93,8 +93,8 @@ func niceError(err error) veun.AsView {
 
 	lis := make(veun.Views, len(errs))
 	for idx, err := range errs {
-		lis[idx] = html.Li(nil, html.Text(err))
+		lis[idx] = el.Li().InnerText(err)
 	}
 
-	return html.Ul(nil, lis)
+	return el.Ul().Content(lis)
 }
