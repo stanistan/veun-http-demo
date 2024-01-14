@@ -10,6 +10,7 @@ the `md.View()` that we create [here][md-view].
 ```go
 import (
     "net/http"
+    "strings"
 
     "github.com/stanistan/veun"
     "github.com/stanistan/veun/el"
@@ -40,35 +41,38 @@ This can start out using the `veun/html` package since we don't _exactly_ know w
 we're going to do with this (to render a simple list). But once this gets a bit
 more complicated, we can drop it in its own template.
 
+We pass in the current url so we can set an active node on the tree.
+
 ```go
 func docTree(current string) veun.AsView {
-    return el.Div().
-        Class("doc-tree").
-        Content(treeView(docs.Tree(), current))
+	return el.Div().Class("doc-tree").Content(
+		treeView(docs.Tree(), current),
+	)
 }
 ```
 
-And our tree view:
+And our tree view, this could be a struct instead of a function.
 
 ```go
 func treeView(n docs.Node, current string) veun.AsView {
+	childPages := n.SortedKeys()
+	name, href := n.LinkInfo()
+
+	if len(childPages) == 0 {
+		if current == href {
+			return el.Div().Class("current").InnerText(name)
+		} else {
+			return el.Div().Content(
+                el.A().Attr("href", href).InnerText(name),
+            )
+		}
+	}
+
 	var children []veun.AsView
-	for _, name := range n.SortedKeys() {
+	for _, name := range childPages {
 		children = append(children, el.Li().Content(
 			treeView(n.Children[name], current),
 		))
-	}
-
-	name, href := n.LinkInfo()
-	if len(children) == 0 {
-        // HACK
-		if ("/docs/" + current) == href {
-            return el.Div().Class("current").InnerText(name)
-		}
-		return el.Div().
-            Content(
-                el.A().Attr("href", href).InnerText(name),
-		)
 	}
 
 	return el.Div().Content(
@@ -83,19 +87,13 @@ func treeView(n docs.Node, current string) veun.AsView {
 A fun part here is to use the built-in `request.Handler`, `Always` to make
 the actual HTML page we're going to look at for the indexes.
 
-#### Docs Index
-
-```go
-var docsIndex = request.Always(docTree(""))
-```
-
 #### Home Page
 
 ```go
 var index = request.Always(veun.Views{
     md.View(static.Index),
     veun.Raw("<hr />"),
-    docTree(""),
+    docTree("/"),
 })
 ```
 
@@ -108,12 +106,14 @@ mapping it back to the path in our static file server.
 So `/docs/$THING` maps to `/docs/$THING.go.md` in our repo, else we 404.
 
 ```go
-var docsPage = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
-	if r.URL.Path == "" {
-		return docsIndex.ViewForRequest(r)
+var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
+    url := strings.TrimPrefix(r.URL.Path, "/docs")
+	if url == "/" || url == "" {
+        return docTree("/"), nil, nil
 	}
 
-	bs, err := static.Docs.ReadFile(r.URL.Path + ".go.md")
+    url = strings.TrimPrefix(url, "/")
+	bs, err := static.Docs.ReadFile(url+ ".go.md")
 	if err != nil {
 		return nil, http.NotFoundHandler(), nil
 	}

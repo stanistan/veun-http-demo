@@ -67,9 +67,6 @@ func serverOld() http.Handler {
 
 	mux.Handle("/lazy", h(html(view.LazyRequestHandler())))
 
-	mux.Handle("/docs", h(html(docsIndex)))
-	mux.Handle("/docs/", http.StripPrefix("/docs/", h(html(docsPage))))
-
 	// mux.Handle("/", handler.OnlyRoot(h(html(view.HomeViewHandler()))))
 	mux.Handle("/", handler.OnlyRoot(h(html(index))))
 
