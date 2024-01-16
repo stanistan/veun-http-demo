@@ -61,6 +61,9 @@ func (n *Node) insertPath(pieces []string, i int) {
 
 ### Lookup, links, etc
 
+Go maps don't have consistent ordering so we have to sort our own
+keys.
+
 ```go
 func (n *Node) SortedKeys() []string {
 	keys := make([]string, len(n.Children))
@@ -87,7 +90,9 @@ for the duration of the server.
 
 ```go
 var Tree = sync.OnceValue(func() Node {
-	root := Node{Name: "docs"}
+	root := Node{
+        Name: "/",
+    }
 
     for _, filename := range DocFilenames() {
         root.insert(filename)

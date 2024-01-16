@@ -70,33 +70,6 @@ We do this by giving the view an interface to fullfill.
 type DataMutator interface {
 	SetPageData(d *Data)
 }
-
-type DataMutatorFunc func(*Data)
-
-func (f DataMutatorFunc) SetPageData(d *Data) {
-    f(d)
-}
-
-type viewWithMutator struct {
-    v veun.AsView
-    m DataMutator
-}
-
-func (v viewWithMutator) View(ctx context.Context) (*veun.View, error) {
-    return v.v.View(ctx)
-}
-
-func (v viewWithMutator) SetPageData(d *Data) {
-    v.m.SetPageData(d)
-}
-
-func WithMutator(v veun.AsView, m DataMutator) veun.AsView {
-    return viewWithMutator{v, m}
-}
-
-func WithMutatorFunc(v veun.AsView, m DataMutatorFunc) veun.AsView {
-    return viewWithMutator{v, m}
-}
 ```
 
 And the function we use to for construction will invoke this for us.

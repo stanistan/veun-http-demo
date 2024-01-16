@@ -17,11 +17,13 @@ func main() {
 ## The Deets
 
 Let's actually call our logger first, this part is uninteresting,
-this is what we defined in the [first doc](/doc/1).
+this is what we defined in the [boostrapping doc](/docs/cmd/demo-server/bootstrap).
 
 ```go
 initLogger()
 ```
+
+The server error logger is also configured to use the `slog` logger.
 
 ### Server Address
 
@@ -40,19 +42,17 @@ if port := os.Getenv("PORT"); port != "" {
 
 ### Defining the server
 
-You'll notice the stub `routes` definition in the call,
-for now, we can think of it as an empty `func() http.Handler`
-but we'll end up adding things to it (like our routes) so that
-this whole server actually does _something_.
+You'll notice the `routes` definition in the call,
+this is defined [here](/docs/cmd/demo-server/routes).
 
-For now this has all definitely been boilerplate to get us set
-up with static file serving, and just regular serving, but
-we're not _using_ any of that just yet.
+This is a function that returns a standard `http.Handler`.
+
+This `main` function body is just boilerpate for serving requests.
 
 ```go
 s := &http.Server{
 	Addr:    addr,
-	Handler: routes(),
+	Handler: routes(), // <- the handler!
 
 	// logging
 	ErrorLog: slog.NewLogLogger(
@@ -78,6 +78,3 @@ Closing `main`:
 ```go
 }
 ```
-
-## Defining our routes
-

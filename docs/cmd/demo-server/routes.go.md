@@ -35,7 +35,7 @@ a middleware-y function.
 
 ```go
 var html = page.Handler(page.Data{
-    Title:    "veun-http (demo)",
+    Title:    "veun-http-demo",
     CSSFiles: []string{"/static/styles.css"},
     JSFiles:  []string{"/static/htmx.1.9.9.min.js", "/static/prism.js"},
 })
