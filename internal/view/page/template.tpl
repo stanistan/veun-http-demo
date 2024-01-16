@@ -1,15 +1,15 @@
 <html>
-	<head>
-		<title>{{ .Title }}</title>
+  <head>
+    <title>{{ .Title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {{ range .CSSFiles }}
-		<link rel="stylesheet" type="text/css" href="{{ . }}" />
+    <link rel="stylesheet" type="text/css" href="{{ . }}" />
     {{ end }}
-	</head>
-	<body>
+  </head>
+  <body>
     {{ slot "body" }}
     {{ range .JSFiles }}
-		<script type="text/javascript" src="{{ . }}"></script>
+    <script type="text/javascript" src="{{ . }}"></script>
     {{ end }}
-	</body>
+  </body>
 </html>
