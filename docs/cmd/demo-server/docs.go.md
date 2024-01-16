@@ -9,16 +9,17 @@ the `md.View()` that we create [here][md-view].
 
 ```go
 import (
-    "net/http"
-    "strings"
+	"net/http"
+	"strings"
 
-    "github.com/stanistan/veun"
-    "github.com/stanistan/veun/el"
-    "github.com/stanistan/veun/vhttp/request"
+	"github.com/stanistan/veun"
+	"github.com/stanistan/veun/el"
+	"github.com/stanistan/veun/vhttp/request"
 
-    static "github.com/stanistan/veun-http-demo/docs"
-    "github.com/stanistan/veun-http-demo/internal/docs"
-    "github.com/stanistan/veun-http-demo/internal/view/md"
+	static "github.com/stanistan/veun-http-demo/docs"
+	"github.com/stanistan/veun-http-demo/internal/docs"
+	"github.com/stanistan/veun-http-demo/internal/view/md"
+	"github.com/stanistan/veun-http-demo/internal/view/two_column"
 )
 ```
 
@@ -90,10 +91,10 @@ the actual HTML page we're going to look at for the indexes.
 #### Home Page
 
 ```go
-var index = request.Always(veun.Views{
-    md.View(static.Index),
-    veun.Raw("<hr />"),
-    docTree("/"),
+var index = request.Always(two_column.View{
+	Title: "veun-http-demo",
+	Nav:   docTree("/"),
+	Main:  md.View(static.Index),
 })
 ```
 
@@ -105,23 +106,51 @@ mapping it back to the path in our static file server.
 
 So `/docs/$THING` maps to `/docs/$THING.go.md` in our repo, else we 404.
 
+It's would be nice to have our handler also set the title
+for the page, and for this we can use `page.DataMutator`.
+
+The view/page takes its own content, lays it out and sets the
+title.
+
 ```go
-var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
-    url := strings.TrimPrefix(r.URL.Path, "/docs")
-	if url == "/" || url == "" {
-        return docTree("/"), nil, nil
+func docsForUrl(currentUrl, pathToFile string) (veun.AsView, error) {
+	bs, err := static.Docs.ReadFile(pathToFile)
+	if err != nil {
+		return nil, err
 	}
 
-    url = strings.TrimPrefix(url, "/")
-	bs, err := static.Docs.ReadFile(url+ ".go.md")
+	return two_column.View{
+		Nav:   docTree(currentUrl),
+		Main:  md.View(bs),
+		Title: currentUrl + " | veun-http-demo",
+	}, nil
+}
+```
+
+The handler does the "controller" aspect of making
+sure we're rendering the correct view.
+
+Because we are handling both /docs and /docs/ with the same handler,
+we strip the prefix here, but keep raw url around because it's useful
+for getting the current page.
+
+```go
+var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
+	var (
+		rawUrl = r.URL.Path
+		url    = strings.TrimPrefix(rawUrl, "/docs")
+	)
+
+	if url == "/" || url == "" {
+		return docTree("/"), nil, nil
+	}
+
+	page, err := docsForUrl(rawUrl, strings.TrimPrefix(url, "/")+".go.md")
 	if err != nil {
 		return nil, http.NotFoundHandler(), nil
 	}
 
-    return el.Div().Class("doc-page-cols").Content(
-        el.Div().Content(docTree(r.URL.Path)),
-        el.Div().Content(md.View(bs)),
-    ), nil, nil
+	return page, nil, nil
 })
 ```
 

@@ -81,17 +81,17 @@ hr {
   padding: 0;
 }
 
-.doc-page-cols {
+.page-cols {
   display: flex;
   gap: 10px;
   height: 100vh;
 }
 
-.doc-page-cols :first-child {
+.page-cols :first-child {
   flex: 0 0 auto;
 }
 
-.doc-page-cols :last-child {
+.page-cols :last-child {
   flex: 1 1 auto;
   overflow: auto;
 }
