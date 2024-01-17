@@ -80,7 +80,11 @@ func (n *Node) SortedKeys() []string {
 func (n *Node) LinkInfo() (string, string) {
     name := strings.TrimSuffix(n.Name, ".go.md")
     href := filepath.Join(n.Href, name)
-    return name, href
+    if len(n.Children) > 0 {
+        return name + "/", href + "/"
+    } else {
+        return name + ".md", href + ".md"
+    }
 }
 ```
 
@@ -89,7 +93,7 @@ for the duration server runtime.
 
 ```go
 var Tree = sync.OnceValue(func() Node {
-    root := Node{Name: "", Href: "/"}
+    root := Node{Name: "", Href: ""}
 
     for _, filename := range DocFilenames() {
         root.insert(filepath.Join("docs", filename))

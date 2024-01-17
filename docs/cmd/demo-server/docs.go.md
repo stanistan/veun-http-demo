@@ -1,5 +1,3 @@
-# Rendering our docs
-
 This is one part where the code isn't executed _as is_.
 I've embedded the root `/docs/` directory of this repo into
 using the `embed` package.
@@ -9,8 +7,6 @@ the `md.View()` that we create [here][md-view].
 
 ```go
 import (
-	"fmt"
-	"log/slog"
 	"net/http"
 	"strings"
 
@@ -61,10 +57,7 @@ func treeView(n docs.Node, current string) veun.AsView {
 	var elName veun.AsView
 	attrs := el.Attrs{}
 	if len(childPages) > 0 {
-		name += "/"
 		attrs["class"] += " nav-dir"
-	} else {
-		name += ".md"
 	}
 
 	if current == href {
@@ -117,23 +110,22 @@ Our handler can also set the title for the page using `page.DataMutator`.
 func docPageContent(currentUrl, pathToFile string) veun.AsView {
 	bs, err := static.Docs.ReadFile(pathToFile)
 	if err != nil {
-        slog.Warn("could not read filepath", "err", err)
-        return fallbackContent(currentUrl, fmt.Errorf("no content for %s: %w", currentUrl, err))
+        return fallbackContent(currentUrl)
 	}
 
     return el.Article().Content(
-        el.H1().InnerText(currentUrl + ".md"),
+        el.H1().InnerText(currentUrl),
         el.Hr(),
         md.View(bs),
     )
 }
 
-func fallbackContent(url string, err error) veun.AsView {
+func fallbackContent(url string) veun.AsView {
 	return el.Article().Content(
 		el.H1().InnerText(url),
-		el.P().InnerText("pick an .md file"),
+		el.P().InnerText("this is fallback content."),
 		el.Hr(),
-        el.Em().InnerText(err.Error()).In(el.P()),
+		el.P().InnerText("probably for a directory"),
 	)
 }
 ```
@@ -155,7 +147,10 @@ var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.H
 		url    = strings.TrimPrefix(rawUrl, "/docs")
 	)
 
-    content := docPageContent(rawUrl, strings.TrimPrefix(url, "/")+".go.md")
+    content := docPageContent(
+        rawUrl,
+        strings.TrimSuffix(strings.TrimPrefix(url, "/"), ".md")+".go.md",
+    )
 	return two_column.View{
 		Nav:   docTree(rawUrl),
 		Main:  content,

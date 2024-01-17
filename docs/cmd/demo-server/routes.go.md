@@ -1,5 +1,3 @@
-# routes
-
 ```go
 import (
 	"net/http"
@@ -11,7 +9,7 @@ import (
 )
 ```
 
-## Helpers
+## helpers
 
 Becuase we're going to be doing lots of composition of
 request handers and http handlers (from `veun`), we have some
@@ -35,16 +33,16 @@ a middleware-y function.
 
 ```go
 var html = page.Handler(page.Data{
-    Title:    "veun-http-demo",
-    CSSFiles: []string{"/static/styles.css"},
-    JSFiles:  []string{"/static/htmx.1.9.9.min.js", "/static/prism.js"},
+	Title:    "veun-http-demo", // default title
+	CSSFiles: []string{"/static/styles.css"},
+	JSFiles:  []string{"/static/htmx.1.9.9.min.js", "/static/prism.js"},
 })
 ```
 
-Any route can overwrite and/or add data to this struct if it
-implements `page.DataMutator`.
+Any view/request.Handler can mutate the data we pass here by
+implementing the `page.DataMutator` interface.
 
-## routes / handler
+## handlers
 
 Open our function body:
 
@@ -53,15 +51,12 @@ func routes() http.Handler {
     mux := http.NewServeMux()
 ```
 
----
-
 ### Docs!
 
 We only serve two routes for docs, and they can use the same
 handler for both.
 
 ```go
-mux.Handle("/docs", h(html(docsHandler)))
 mux.Handle("/docs/", h(html(docsHandler)))
 ```
 
@@ -89,13 +84,24 @@ when any routes aren't actually defined, and even add our own 404
 handler, it's pretty neat.
 
 ```go
-return handler.Checked(mux, staticFileServer())
+return handler.Checked(
+	mux,                // the ServeMux we've just been adding routes to
+	staticFileServer(), // falls back to the static file server if we 404
+	notFoundHandler(),  // our own custom notFoundHandler
+)
 ```
-
----
 
 Closing `server`:
 
 ```go
+}
+```
+
+## 404 not found
+
+```go
+func notFoundHandler() http.Handler {
+	// TODO custom handler :)
+	return http.NotFoundHandler()
 }
 ```
