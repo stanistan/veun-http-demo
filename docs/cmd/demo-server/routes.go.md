@@ -97,11 +97,3 @@ Closing `server`:
 }
 ```
 
-## 404 not found
-
-```go
-func notFoundHandler() http.Handler {
-	// TODO custom handler :)
-	return http.NotFoundHandler()
-}
-```

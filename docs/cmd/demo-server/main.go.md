@@ -17,7 +17,7 @@ func main() {
 ## The Deets
 
 Let's actually call our logger first, this part is uninteresting,
-this is what we defined in the [boostrapping doc](/docs/cmd/demo-server/bootstrap).
+this is what we defined in the [bootstrap](/docs/cmd/demo-server/bootstrap.md).
 
 ```go
 initLogger()
@@ -38,7 +38,6 @@ if port := os.Getenv("PORT"); port != "" {
 	addr = ":8080"
 }
 ```
-
 
 ### Defining the server
 
@@ -70,8 +69,6 @@ if err := s.ListenAndServe(); err != nil {
 	slog.Error("server stopped", slog.String("err", err.Error()))
 }
 ```
-
----
 
 Closing `main`:
 

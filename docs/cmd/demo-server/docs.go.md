@@ -29,7 +29,7 @@ it to the server.
 
 ### Getting the tree
 
-This is in the [`internal/docs`](/docs/internal/docs/tree) package.
+This is in the [`internal/docs`](/docs/internal/docs/tree.md) package.
 
 ## Index View
 
@@ -159,4 +159,4 @@ var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.H
 })
 ```
 
-[md-view]: /docs/internal/view/md/view
+[md-view]: /docs/internal/view/md/view.md
