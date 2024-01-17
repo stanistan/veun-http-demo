@@ -65,7 +65,12 @@ hr {
 }
 
 .doc-tree a {
-  font-weight: bold;
+  color: #444;
+  text-decoration: none;
+}
+
+.doc-tree .nav-dir > a {
+  font-weight: normal;
 }
 
 .doc-tree .current {

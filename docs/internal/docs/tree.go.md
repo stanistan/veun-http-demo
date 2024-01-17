@@ -50,7 +50,7 @@ func (n *Node) insertPath(pieces []string, i int) {
 	if !exists {
 		node = Node{
 			Name: name,
-			Href: strings.Join(pieces[:i], "/"),
+			Href: "/" + strings.Join(pieces[:i], "/"),
 		}
 	}
 
@@ -79,26 +79,23 @@ func (n *Node) SortedKeys() []string {
 
 func (n *Node) LinkInfo() (string, string) {
     name := strings.TrimSuffix(n.Name, ".go.md")
-    href := filepath.Join("/docs", n.Href, name)
+    href := filepath.Join(n.Href, name)
     return name, href
 }
 ```
 
 And our `Tree` constructor is memoized to only execute one time
-for the duration of the server.
-
+for the duration server runtime.
 
 ```go
 var Tree = sync.OnceValue(func() Node {
-	root := Node{
-        Name: "/",
-    }
+    root := Node{Name: "", Href: "/"}
 
     for _, filename := range DocFilenames() {
-        root.insert(filename)
+        root.insert(filepath.Join("docs", filename))
     }
 
-	return root
+    return root
 })
 ```
 
@@ -127,5 +124,3 @@ var DocFilenames = sync.OnceValue(func() []string {
 	return filenames
 })
 ```
-
-

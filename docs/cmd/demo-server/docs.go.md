@@ -59,14 +59,20 @@ func treeView(n docs.Node, current string) veun.AsView {
 	childPages := n.SortedKeys()
 	name, href := n.LinkInfo()
 
-	if len(childPages) == 0 {
-		if current == href {
-			return el.Div().Class("current").InnerText(name)
-		} else {
-			return el.Div().Content(
-                el.A().Attr("href", href).InnerText(name),
-            )
-		}
+	var elName veun.AsView
+	attrs := el.Attrs{}
+	if len(childPages) > 0 {
+		name += "/"
+		attrs["class"] += " nav-dir"
+	} else {
+		name += ".md"
+	}
+
+	if current == href {
+		elName = el.Text(name + " ↞")
+		attrs["class"] += " current"
+	} else {
+		elName = el.A().Attr("href", href).InnerText(name)
 	}
 
 	var children []veun.AsView
@@ -77,7 +83,7 @@ func treeView(n docs.Node, current string) veun.AsView {
 	}
 
 	return el.Div().Content(
-		el.Div().InnerText(name+"/"),
+		el.Div().Attrs(attrs).Content(elName),
 		el.Ul().Content(children...),
 	)
 }
@@ -135,19 +141,26 @@ we strip the prefix here, but keep raw url around because it's useful
 for getting the current page.
 
 ```go
+// FIXME: this specific function/handler should not be looking up the file by path
+// but walking the doc tree, and that way if something is a directory, we can
+// treat it differently than if if were a file.
 var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
 	var (
 		rawUrl = r.URL.Path
 		url    = strings.TrimPrefix(rawUrl, "/docs")
 	)
 
-	if url == "/" || url == "" {
-		return docTree("/"), nil, nil
-	}
-
 	page, err := docsForUrl(rawUrl, strings.TrimPrefix(url, "/")+".go.md")
 	if err != nil {
-		return nil, http.NotFoundHandler(), nil
+		return two_column.View{
+			Nav: docTree(rawUrl),
+			Main: el.Article().Content(
+				el.H2().InnerText(rawUrl),
+				el.P().InnerText("pick an .md file"),
+                el.Hr(),
+			),
+			Title: rawUrl + " | veun-http-demo",
+		}, nil, nil
 	}
 
 	return page, nil, nil
