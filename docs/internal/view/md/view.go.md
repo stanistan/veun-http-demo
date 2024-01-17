@@ -82,11 +82,11 @@ is fine, and dumb, and simple, and simple is good.
 ## Constructor
 
 This is trivial, and allows us to have more semantic
-HTML around our generated markdown-- like an `<article>`.
+HTML around our generated markdown.
 
 ```go
 func View(bs []byte) veun.AsView {
-    return el.Article().Content(view{Bytes: bs})
+    return el.Div().Class("md").Content(view{Bytes: bs})
 }
 ```
 

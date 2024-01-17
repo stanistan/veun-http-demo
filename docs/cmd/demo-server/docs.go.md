@@ -9,6 +9,8 @@ the `md.View()` that we create [here][md-view].
 
 ```go
 import (
+	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -29,7 +31,7 @@ We want to make a component that lists out all of the docs
 that we've written, by their filenames so that we can attach
 it to the server.
 
-### Getting the files
+### Getting the tree
 
 This is in the [`internal/docs`](/docs/internal/docs/tree) package.
 
@@ -37,10 +39,6 @@ This is in the [`internal/docs`](/docs/internal/docs/tree) package.
 
 Now that we have the files always available, we can make an index page that includes
 the directory.
-
-This can start out using the `veun/html` package since we don't _exactly_ know what
-we're going to do with this (to render a simple list). But once this gets a bit
-more complicated, we can drop it in its own template.
 
 We pass in the current url so we can set an active node on the tree.
 
@@ -52,7 +50,8 @@ func docTree(current string) veun.AsView {
 }
 ```
 
-And our tree view, this could be a struct instead of a function.
+And our tree view function. This is recursive and walks the
+entire tree to build out the nav.
 
 ```go
 func treeView(n docs.Node, current string) veun.AsView {
@@ -100,7 +99,7 @@ the actual HTML page we're going to look at for the indexes.
 var index = request.Always(two_column.View{
 	Title: "veun-http-demo",
 	Nav:   docTree("/"),
-	Main:  md.View(static.Index),
+	Main:  el.Article().Content(md.View(static.Index)),
 })
 ```
 
@@ -110,26 +109,32 @@ Each individual document is mounted at a `/docs/$SLUG` looking
 URL, so we can use a request handler specificlaly for that and
 mapping it back to the path in our static file server.
 
-So `/docs/$THING` maps to `/docs/$THING.go.md` in our repo, else we 404.
+So `/docs/$THING` maps to `/docs/$THING.go.md` in our repo.
 
-It's would be nice to have our handler also set the title
-for the page, and for this we can use `page.DataMutator`.
-
-The view/page takes its own content, lays it out and sets the
-title.
+Our handler can also set the title for the page using `page.DataMutator`.
 
 ```go
-func docsForUrl(currentUrl, pathToFile string) (veun.AsView, error) {
+func docPageContent(currentUrl, pathToFile string) veun.AsView {
 	bs, err := static.Docs.ReadFile(pathToFile)
 	if err != nil {
-		return nil, err
+        slog.Warn("could not read filepath", "err", err)
+        return fallbackContent(currentUrl, fmt.Errorf("no content for %s: %w", currentUrl, err))
 	}
 
-	return two_column.View{
-		Nav:   docTree(currentUrl),
-		Main:  md.View(bs),
-		Title: currentUrl + " | veun-http-demo",
-	}, nil
+    return el.Article().Content(
+        el.H1().InnerText(currentUrl + ".md"),
+        el.Hr(),
+        md.View(bs),
+    )
+}
+
+func fallbackContent(url string, err error) veun.AsView {
+	return el.Article().Content(
+		el.H1().InnerText(url),
+		el.P().InnerText("pick an .md file"),
+		el.Hr(),
+        el.Em().InnerText(err.Error()).In(el.P()),
+	)
 }
 ```
 
@@ -150,20 +155,12 @@ var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.H
 		url    = strings.TrimPrefix(rawUrl, "/docs")
 	)
 
-	page, err := docsForUrl(rawUrl, strings.TrimPrefix(url, "/")+".go.md")
-	if err != nil {
-		return two_column.View{
-			Nav: docTree(rawUrl),
-			Main: el.Article().Content(
-				el.H2().InnerText(rawUrl),
-				el.P().InnerText("pick an .md file"),
-                el.Hr(),
-			),
-			Title: rawUrl + " | veun-http-demo",
-		}, nil, nil
-	}
-
-	return page, nil, nil
+    content := docPageContent(rawUrl, strings.TrimPrefix(url, "/")+".go.md")
+	return two_column.View{
+		Nav:   docTree(rawUrl),
+		Main:  content,
+		Title: rawUrl + " | veun-http-demo",
+	}, nil, nil
 })
 ```
 
