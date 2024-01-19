@@ -65,6 +65,21 @@ func main() {
 }
 
 func walk(root string, genF func(string) error) error {
+	files, err := os.ReadDir(root)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		if !file.IsDir() && strings.HasSuffix(file.Name(), ".go.md") {
+			if err := genF(filepath.Join(root, file.Name())); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+
 	return filepath.WalkDir(root, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			return err

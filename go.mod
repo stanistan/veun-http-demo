@@ -4,7 +4,7 @@ go 1.21.4
 
 require (
 	github.com/cespare/reflex v0.3.1
-	github.com/stanistan/veun v0.0.0-20240116144310-e34eeb028839
+	github.com/stanistan/veun v0.0.0-20240118010214-3cb25cd0dc45
 	github.com/yuin/goldmark v1.6.0
 )
 

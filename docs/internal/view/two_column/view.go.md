@@ -7,8 +7,10 @@ main section.
 import (
     _ "embed"
     "context"
+    "net/http"
 
     "github.com/stanistan/veun"
+    "github.com/stanistan/veun/vhttp/request"
 
     "github.com/stanistan/veun-http-demo/internal/view/page"
 )
@@ -45,6 +47,32 @@ We can have this view provide a title to the page.
 
 ```go
 func (v View) SetPageData(d *page.Data) {
-    d.Title = v.Title
+    if v.Title != "" {
+        d.Title = v.Title
+    }
+}
+```
+
+## handler
+
+We can also make our two column view a handler middleware.
+
+```go
+type Handler struct {
+	Nav, Main request.Handler
+}
+
+func (h Handler) ViewForRequest(r *http.Request) (veun.AsView, http.Handler, error) {
+	main, next, err := h.Main.ViewForRequest(r)
+	if err != nil || main == nil {
+		return nil, next, err
+	}
+
+	nav, _, err := h.Nav.ViewForRequest(r)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return View{Main: main, Nav: nav, Title: "TEST"}, next, nil
 }
 ```

@@ -10,7 +10,6 @@ import (
 
 	"github.com/stanistan/veun"
 	"github.com/stanistan/veun/vhttp"
-	"github.com/stanistan/veun/vhttp/handler"
 	"github.com/stanistan/veun/vhttp/request"
 
 	"github.com/stanistan/veun-http-demo/internal/view"
@@ -67,14 +66,5 @@ func serverOld() http.Handler {
 
 	mux.Handle("/lazy", h(html(view.LazyRequestHandler())))
 
-	// mux.Handle("/", handler.OnlyRoot(h(html(view.HomeViewHandler()))))
-	mux.Handle("/", handler.OnlyRoot(h(html(index))))
-
-	// Our handler does a 404 fallback between the mux, & static files.
-	// we introduce a not-found handler as the last http.Handler to check.
-	return handler.Checked(
-		mux,                                    // first we we serve our "routes"
-		staticFileServer(),                     // if any of those 404 we check static files
-		h(html(view.NotFoundRequestHandler())), // if any of those 404 we use our notFound handler
-	)
+	return mux
 }

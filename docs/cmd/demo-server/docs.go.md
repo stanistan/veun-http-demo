@@ -15,6 +15,7 @@ import (
 	"github.com/stanistan/veun/vhttp/request"
 
 	static "github.com/stanistan/veun-http-demo/docs"
+	"github.com/stanistan/veun-http-demo/internal/components"
 	"github.com/stanistan/veun-http-demo/internal/docs"
 	"github.com/stanistan/veun-http-demo/internal/view/md"
 	"github.com/stanistan/veun-http-demo/internal/view/two_column"
@@ -113,10 +114,18 @@ func docPageContent(currentUrl, pathToFile string) veun.AsView {
         return fallbackContent(currentUrl)
 	}
 
+    content := md.View(bs)
+
+    if component, ok := components.ForURL(
+        strings.TrimPrefix(currentUrl, "/docs/internal/components/"),
+    ); ok {
+        content = veun.Views{component, content}
+    }
+
     return el.Article().Content(
         el.H1().InnerText(currentUrl),
         el.Hr(),
-        md.View(bs),
+        content,
     )
 }
 
@@ -151,6 +160,7 @@ var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.H
         rawUrl,
         strings.TrimSuffix(strings.TrimPrefix(url, "/"), ".md")+".go.md",
     )
+
 	return two_column.View{
 		Nav:   docTree(rawUrl),
 		Main:  content,

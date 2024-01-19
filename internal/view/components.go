@@ -28,30 +28,16 @@ func ComponentPicker() request.Handler {
 	})
 }
 
-func ComponentLink(idx int) veun.AsView {
-	return el.Div().
-		Class("component-permalink").
-		Content(
-			el.A().
-				Attr("href", fmt.Sprintf("/component?idx=%d", idx)).
-				InnerText("permalink"),
-		)
-}
-
 var DefinedComponents = Components{
 	ClickTrigger{},
 	Delazy("2s", false),
 	Delazy("8s", true),
-	AlwaysFails{},
-	AlwaysFails{true},
 }
 
 var DefinedComponentHandlers = []request.Handler{
 	ComponentHandler(ClickTriggerHandler),
 	DelazyHandler("2s", false),
 	DelazyHandler("8s", true),
-	ComponentHandler(request.Always(AlwaysFails{})),
-	ComponentHandler(request.Always(AlwaysFails{true})),
 }
 
 func Delazy(delay string, tpl bool) Component {

@@ -53,15 +53,11 @@ func routes() http.Handler {
 
 ### Docs!
 
-We only serve two routes for docs, and they can use the same
-handler for both.
+Docs are really the only interesting route here. It serves everything.
 
 ```go
 mux.Handle("/docs/", h(html(docsHandler)))
 ```
-
-I really feel like there should be a better pattern for this when
-using `http.ServeMux`, but for now, the repetition is _fine_.
 
 ### Root
 

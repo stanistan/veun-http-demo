@@ -1,15 +1,27 @@
-package view
-
+```go
 import (
-	"context"
-	"errors"
-	"fmt"
-	"strings"
+    _ "embed"
+    "runtime"
+    "strings"
+    "path/filepath"
+    "fmt"
+    "context"
+    "log/slog"
 
 	"github.com/stanistan/veun"
 	"github.com/stanistan/veun/el"
 )
+```
 
+## handler
+
+The components handler takes the first name of the components and tries
+to find it _both_ as a registered component to render (and how), as well
+as the documentation for it by name.
+
+### The component interface
+
+```go
 type Component interface {
 	veun.AsView
 	Title() string
@@ -39,9 +51,13 @@ type component struct {
 	BodyClass string
 }
 
+//go:embed component.tpl
+var tpl string
+var componentTpl = veun.MustParseTemplate("component", tpl)
+
 func (v component) template() veun.Template {
 	return veun.Template{
-		Tpl:   templates.Lookup("component.tpl"),
+		Tpl:   componentTpl,
 		Slots: veun.Slots{"body": v.Body},
 		Data:  v,
 	}
@@ -54,44 +70,38 @@ func (v component) View(_ context.Context) (*veun.View, error) {
 }
 
 func (v component) ViewForError(ctx context.Context, err error) (veun.AsView, error) {
+    slog.Error("error", "err", err)
 	return component{
 		Name: v.Name,
 		Body: veun.Views{
 			el.Div().Content(el.Strong().InnerText("Error Captured:")),
-			niceError(err),
+            el.P().InnerText(err.Error()),
 		},
 		BodyClass: "error",
 	}, nil
 }
+```
 
-func niceError(err error) veun.AsView {
-	var (
-		errs = []string{err.Error()}
-	)
+### component registration
 
-	for {
-		err = errors.Unwrap(err)
-		if err == nil {
-			break
-		}
+```go
+var componentsMap = map[string]Components{}
 
-		var (
-			msg     = err.Error()
-			prevIdx = len(errs) - 1
-			prev    = errs[prevIdx]
-		)
+func c(vs ...Component) {
+    _, file, _, ok := runtime.Caller(1)
+    if !ok {
+        panic("no caller")
+    } else {
+        file = strings.TrimSuffix(filepath.Base(file), ".generated.go")
+    }
 
-		errs[prevIdx] = strings.TrimRight(
-			prev[:len(prev)-len(msg)], ": ",
-		)
-
-		errs = append(errs, msg)
-	}
-
-	lis := make(veun.Views, len(errs))
-	for idx, err := range errs {
-		lis[idx] = el.Li().InnerText(err)
-	}
-
-	return el.Ul().Content(lis)
+	componentsMap[file+".md"] = Components(vs)
 }
+
+func ForURL(url string) (veun.AsView, bool) {
+	slog.Debug("checking url", "url", url)
+    slog.Debug("lets see what we got", "cs", componentsMap)
+	v, ok := componentsMap[url]
+	return v, ok
+}
+```

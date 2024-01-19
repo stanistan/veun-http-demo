@@ -13,25 +13,30 @@ article {
   margin: 8px;
 }
 
-.component { }
-
-.component-permalink {
-  font-size: 80%;
-  margin-bottom: 10px;
-  text-align: right;
+.component {
+  border-radius: 0 0 4px 4px;
+  margin-bottom: 2px;
+  overflow: hidden;
+}
+.component + .component {
+  margin-top: 10px;
 }
 
 .component .name {
   margin-bottom: 0;
+  margin-top: 3px;
 }
 
 .component .body {
+  color: #fff;
   border-top: 2px solid;
-  padding: 10px;
+  padding: 10px 10px 3px;
+  background: #111;
 }
 
 .component .body.error {
-  background: pink;
+  background: #111;
+  border-bottom: 12px solid #c6f1b2;
 }
 
 code {
