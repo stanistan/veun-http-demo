@@ -51,9 +51,11 @@ func routes() http.Handler {
     mux := http.NewServeMux()
 ```
 
-### Docs!
+### Docs & Components
 
-Docs are really the only interesting route here. It serves everything.
+Docs are really the only interesting route here. It serves everything,
+from the static documents to demo compontents in the `internal/components`
+path.
 
 ```go
 mux.Handle("/docs/", h(html(docsHandler)))

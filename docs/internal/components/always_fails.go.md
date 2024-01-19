@@ -25,7 +25,7 @@ What renders the components at the top of this page :)
 
 ```go
 func init() {
-    c(AlwaysFails{OwnErrorCapture: true}, AlwaysFails{OwnErrorCapture: false})
+    show(AlwaysFails{OwnErrorCapture: true}, AlwaysFails{OwnErrorCapture: false})
 }
 ```
 
@@ -85,7 +85,7 @@ func (v AlwaysFails) ViewForError(_ context.Context, err error) (veun.AsView, er
 We fulfill the `Component` interface by giving this a description in the component UI.
 
 ```go
-func (v AlwaysFails) Title() string {
+func (v AlwaysFails) Description() string {
 	if v.OwnErrorCapture {
 		return "captures itself"
 	}

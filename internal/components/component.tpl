@@ -1,5 +1,5 @@
 <div class="component">
-  <h3 class="name">{{ .Name }}</h3>
+  <h3 class="name">{{ .Type }} - {{ .Description }}</h3>
   <div class="body {{ .BodyClass }}">
     {{ slot "body" }}
   </div>
