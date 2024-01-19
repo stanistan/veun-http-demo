@@ -22,15 +22,6 @@ func serverOld() http.Handler {
 	// our ajax clicked handler that gets hit by htmx
 	mux.Handle("/clicked", h(view.ClickTriggerHandler))
 
-	// components and raw components
-	mux.Handle("/component/raw", h(view.ComponentPicker()))
-	mux.Handle("/component", h(html(view.ComponentPicker())))
-
-	mux.Handle("/components", h(request.Always(view.DefinedComponents)))
-
-	// home view without the html wrapper
-	mux.Handle("/home", h(view.HomeViewHandler()))
-
 	// errors
 	mux.Handle("/error/banana", hf(func(_ *http.Request) (veun.AsView, http.Handler, error) {
 		return nil, nil, fmt.Errorf("banana from /error/banana")
@@ -63,8 +54,6 @@ func serverOld() http.Handler {
 	mux.Handle("/v/echo", hf(func(r *http.Request) (veun.AsView, http.Handler, error) {
 		return veun.Raw(r.URL.Query().Get("in")), nil, nil
 	}))
-
-	mux.Handle("/lazy", h(html(view.LazyRequestHandler())))
 
 	return mux
 }

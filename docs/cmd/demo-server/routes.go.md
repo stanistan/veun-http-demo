@@ -2,8 +2,10 @@
 import (
 	"net/http"
 
+	"github.com/stanistan/veun/el"
 	"github.com/stanistan/veun/vhttp"
 	"github.com/stanistan/veun/vhttp/handler"
+	"github.com/stanistan/veun/vhttp/request"
 
 	"github.com/stanistan/veun-http-demo/internal/view/page"
 )
@@ -59,6 +61,19 @@ path.
 
 ```go
 mux.Handle("/docs/", h(html(docsHandler)))
+```
+
+#### Pages for lazy loading
+
+```go
+mux.Handle("/e/text", h(request.Always(el.Div().Content(
+    el.Em().InnerText("text output,").In(el.P()),
+    el.P().InnerText("and more of it"),
+))))
+```
+
+```go
+mux.Handle("/e/not_found", h(request.Always(notFoundView)))
 ```
 
 ### Root
