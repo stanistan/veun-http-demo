@@ -68,16 +68,21 @@ func treeView(n docs.Node, current string) veun.AsView {
 		elName = el.A().Attr("href", href).InnerText(name)
 	}
 
-	var children []veun.AsView
-	for _, name := range childPages {
-		children = append(children, el.Li().Content(
-			treeView(n.Children[name], current),
-		))
+	var childContent veun.AsView
+	if len(childPages) > 0 {
+		var children []veun.AsView
+		for _, name := range childPages {
+			children = append(children, el.Li().Content(
+				treeView(n.Children[name], current),
+			))
+		}
+		childContent = el.Ul().Content(children...)
 	}
+
 
 	return el.Div().Content(
 		el.Div().Attrs(attrs).Content(elName),
-		el.Ul().Content(children...),
+        childContent,
 	)
 }
 ```
