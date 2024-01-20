@@ -15,7 +15,6 @@ import (
 	"errors"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/el"
 )
 ```
 
@@ -73,10 +72,7 @@ As we see above, this view is also an error handler.
 var _ veun.ErrorHandler = AlwaysFails{}
 
 func (v AlwaysFails) ViewForError(_ context.Context, err error) (veun.AsView, error) {
-    return el.Div().Content(
-		el.Strong().InnerText("Error Inline:"),
-        el.P().InnerText(err.Error()),
-	), nil
+    return errorBody("Error, captured by AlwaysFails:", err.Error()), nil
 }
 ```
 

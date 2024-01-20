@@ -8,7 +8,6 @@ import (
 	"fmt"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/el"
 )
 ```
 
@@ -31,53 +30,48 @@ We also have a _concrete_ view that we're creating from the interface.
 
 ```go
 func View(c IComponent) component {
-    return component{
-        Type: fmt.Sprintf("%T", c),
-        Description: c.Description(),
-        Body: c,
-    }
+	return component{
+		Type:        fmt.Sprintf("%T", c),
+		Description: c.Description(),
+		Body:        c,
+	}
 }
+```
+
+Our component uses the `component.tpl` in this directory.
+
+```go
+//go:embed component.tpl
+var tpl string
+var componentTpl = veun.MustParseTemplate("component", tpl)
 
 type component struct {
 	Type, Description string
 
 	Body      veun.AsView
-	BodyClass string
-}
-
-//go:embed component.tpl
-var tpl string
-var componentTpl = veun.MustParseTemplate("component", tpl)
-
-func (v component) View(ctx context.Context) (*veun.View, error) {
-	return veun.V(veun.Template{
-		Tpl:   componentTpl,
-		Slots: veun.Slots{"body": v.Body},
-		Data:  v,
-	}).WithErrorHandler(v), nil
+    BodyClass string
 }
 ```
 
-A component is its own error handler and can render a component
-with an error, so any failure will not break the page/request
-context in which a "component" is used.
-
-Note the addition of the `error` body class which impacts the template.
+And the view that we create has an error handler based on the
+component itself.
 
 ```go
-func (v component) ViewForError(ctx context.Context, err error) (veun.AsView, error) {
-    // FIXME: having something be an error handler for itself is a bad idea
-    // you can get into a recursive error thing and maybe the library prevents
-    // this?
-	return component{
-		Type:        v.Type,
-		Description: "err: " + v.Description,
-		Body: veun.Views{
-			el.Div().Content(el.Strong().InnerText("Error Captured:")),
-			el.P().InnerText(err.Error()),
-		},
-		BodyClass: "error",
-	}, nil
+func (v component) View(ctx context.Context) (*veun.View, error) {
+	return veun.V(v.template()).WithErrorHandler(errorHandler{v}), nil
+}
+```
+
+The `veun.Template` is reusable so that we can embed it into the
+[`errorView`](/docs/internal/components/error.md).
+
+```go
+func (v component) template() veun.Template {
+	return veun.Template{
+		Tpl:   componentTpl,
+		Slots: veun.Slots{"body": v.Body},
+		Data:  v,
+	}
 }
 ```
 

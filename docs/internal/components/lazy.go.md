@@ -77,7 +77,7 @@ func (v Lazy) placeholder() veun.AsView {
 var _ IComponent = Lazy{}
 
 func (v Lazy) Description() string {
-    return fmt.Sprintf("url=%s delay=%s placeholder=%v", v.URL, v.Delay, v.Placeholder)
+    return fmt.Sprintf("url=%s delay=%s placeholder=%+v", v.URL, v.Delay, v.Placeholder)
 }
 ```
 
@@ -88,7 +88,7 @@ func init() {
 	show(
 		Lazy{URL: "/not_found"},
 		Lazy{URL: "/e/text"},
-		Lazy{URL: "/e/text", Placeholder: el.Text("custom placeholder"), Delay: "5s"},
+		Lazy{URL: "/e/text", Placeholder: el.Text("custom placeholder... with delay"), Delay: "5s"},
 		Lazy{}, // Missing URL
 	)
 }
