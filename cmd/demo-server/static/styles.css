@@ -8,6 +8,15 @@ a {
   color: blue;
 }
 
+.page-title span {
+  display: block;
+}
+
+.page-title .sub-title {
+  font-size: 12px;
+  font-weight: normal;
+}
+
 article {
   max-width: 50em;
   margin: 8px;

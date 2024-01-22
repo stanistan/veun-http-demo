@@ -35,6 +35,10 @@ func show(vs ...IComponent) {
 Callers should use `ForURL` to get a view based on the key.
 
 ```go
+func ForFullURL(url string) (veun.AsView, bool) {
+	return ForURL(strings.TrimPrefix(url, "/docs/internal/components/"))
+}
+
 func ForURL(url string) (veun.AsView, bool) {
 	v, ok := registry[url]
 	return v, ok

@@ -18,6 +18,7 @@ import (
 	"github.com/stanistan/veun-http-demo/internal/components"
 	"github.com/stanistan/veun-http-demo/internal/docs"
 	"github.com/stanistan/veun-http-demo/internal/view/md"
+	"github.com/stanistan/veun-http-demo/internal/view/title"
 	"github.com/stanistan/veun-http-demo/internal/view/two_column"
 )
 ```
@@ -119,15 +120,12 @@ func docPageContent(currentUrl, pathToFile string) veun.AsView {
 	}
 
     content := md.View(bs)
-
-    if component, ok := components.ForURL(
-        strings.TrimPrefix(currentUrl, "/docs/internal/components/"),
-    ); ok {
+    if component, ok := components.ForFullURL(currentUrl); ok {
         content = veun.Views{component, content}
     }
 
     return el.Article().Content(
-        el.H1().InnerText(currentUrl),
+        title.View(currentUrl),
         el.Hr(),
         content,
     )
@@ -135,7 +133,7 @@ func docPageContent(currentUrl, pathToFile string) veun.AsView {
 
 func fallbackContent(url string) veun.AsView {
 	return el.Article().Content(
-		el.H1().InnerText(url),
+        title.View(url),
 		el.P().InnerText("this is fallback content."),
 		el.Hr(),
 		el.P().InnerText("probably for a directory"),
