@@ -11,16 +11,11 @@ import (
 	"github.com/stanistan/veun"
 	"github.com/stanistan/veun/vhttp"
 	"github.com/stanistan/veun/vhttp/request"
-
-	"github.com/stanistan/veun-http-demo/internal/view"
 )
 
 func serverOld() http.Handler {
 
 	mux := http.NewServeMux()
-
-	// our ajax clicked handler that gets hit by htmx
-	mux.Handle("/clicked", h(view.ClickTriggerHandler))
 
 	// errors
 	mux.Handle("/error/banana", hf(func(_ *http.Request) (veun.AsView, http.Handler, error) {
