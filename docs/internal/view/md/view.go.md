@@ -90,5 +90,4 @@ func View(bs []byte) veun.AsView {
 }
 ```
 
-
 [goldmark]: https://github.com/yuin/goldmark

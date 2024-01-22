@@ -37,18 +37,18 @@ entire tree to build out the nav.
 func treeView(n docs.Node, current string) veun.AsView {
 	childPages := n.SortedKeys()
 	name, href := n.LinkInfo()
+	attrs := el.Attrs{}
 
 	var elName veun.AsView
-	attrs := el.Attrs{}
-	if len(childPages) > 0 {
-		attrs["class"] += " nav-dir"
-	}
+	if len(childPages) == 0 || name == "/" {
+        elName = el.A().Attr("href", href).InnerText(name)
+	} else {
+		elName = el.Text(name)
+    }
 
 	if current == href {
 		elName = el.Text(name + " ↞")
 		attrs["class"] += " current"
-	} else {
-		elName = el.A().Attr("href", href).InnerText(name)
 	}
 
 	var childContent veun.AsView

@@ -10,13 +10,11 @@ import (
 	"net/http"
 	"strings"
 
-    "github.com/mssola/useragent"
-
 	"github.com/stanistan/veun"
 	"github.com/stanistan/veun/el"
 	"github.com/stanistan/veun/vhttp/request"
 
-	static "github.com/stanistan/veun-http-demo/docs"
+	"github.com/stanistan/veun-http-demo/docs"
 	"github.com/stanistan/veun-http-demo/internal/components"
 	"github.com/stanistan/veun-http-demo/internal/view/doc_tree"
 	"github.com/stanistan/veun-http-demo/internal/view/md"
@@ -33,18 +31,10 @@ the actual HTML page we're going to look at for the indexes.
 #### Home Page
 
 ```go
-var index = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
-	var (
-		_ = useragent.New(r.UserAgent())
-		tree    = doc_tree.View("/")
-		article = el.Article().Content(md.View(static.Index))
-	)
-
-	return &two_column.View{
-		Title: "veun-http-demo",
-		Nav:   tree,
-		Main:  article,
-	}, nil, nil
+var index = request.Always(&two_column.View{
+    Title: "veun-http-demo",
+    Nav:   doc_tree.View("/"),
+    Main:  el.Article().Content(md.View(docs.Index)),
 })
 ```
 
@@ -54,15 +44,47 @@ Each individual document is mounted at a `/docs/$SLUG` looking
 URL, so we can use a request handler specificlaly for that and
 mapping it back to the path in our static file server.
 
-So `/docs/$THING` maps to `/docs/$THING.go.md` in our repo.
+So `/docs/$THING.md` maps to `/docs/$THING.go.md` in our repo.
 
 Our handler can also set the title for the page using `page.DataMutator`.
 
 ```go
+// FIXME: this specific function/handler should not be looking up the file by path
+// but walking the doc tree, and that way if something is a directory, we can
+// treat it differently than if if were a file.
+var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
+	var (
+		rawUrl = r.URL.Path
+		url    = strings.TrimPrefix(rawUrl, "/docs")
+		docUrl = strings.TrimSuffix(strings.TrimPrefix(url, "/"), ".md") + ".go.md"
+
+		next http.Handler
+	)
+
+	content := docPageContent(rawUrl, docUrl)
+	if content == nil {
+        return nil, http.NotFoundHandler(), nil
+	}
+
+	return &two_column.View{
+		Nav:   doc_tree.View(rawUrl),
+		Main:  content,
+		Title: rawUrl + " | veun-http-demo",
+	}, next, nil
+})
+```
+
+The page content itself reads the file from the static documentation
+and attempts to render it into markdown.
+
+Importantly, if the file also has an associated [component](/docs/internal/components/registry.md),
+then that gets prepended to the content as well.
+
+```go
 func docPageContent(currentUrl, pathToFile string) veun.AsView {
-	bs, err := static.Docs.ReadFile(pathToFile)
+	bs, err := docs.Docs.ReadFile(pathToFile)
 	if err != nil {
-        return fallbackContent(currentUrl)
+        return nil
 	}
 
     content := md.View(bs)
@@ -76,45 +98,7 @@ func docPageContent(currentUrl, pathToFile string) veun.AsView {
         content,
     )
 }
-
-func fallbackContent(url string) veun.AsView {
-	return el.Article().Content(
-        title.View(url),
-		el.P().InnerText("this is fallback content."),
-		el.Hr(),
-		el.P().InnerText("probably for a directory"),
-	)
-}
 ```
 
-The handler does the "controller" aspect of making
-sure we're rendering the correct view.
-
-Because we are handling both /docs and /docs/ with the same handler,
-we strip the prefix here, but keep raw url around because it's useful
-for getting the current page.
-
-```go
-// FIXME: this specific function/handler should not be looking up the file by path
-// but walking the doc tree, and that way if something is a directory, we can
-// treat it differently than if if were a file.
-var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
-	var (
-		rawUrl = r.URL.Path
-		url    = strings.TrimPrefix(rawUrl, "/docs")
-	)
-
-    content := docPageContent(
-        rawUrl,
-        strings.TrimSuffix(strings.TrimPrefix(url, "/"), ".md")+".go.md",
-    )
-
-	return &two_column.View{
-		Nav:   doc_tree.View(rawUrl),
-		Main:  content,
-		Title: rawUrl + " | veun-http-demo",
-	}, nil, nil
-})
-```
 
 [md-view]: /docs/internal/view/md/view.md

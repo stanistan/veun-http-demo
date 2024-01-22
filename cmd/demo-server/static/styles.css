@@ -80,6 +80,7 @@ hr {
 
 .doc-tree {
   margin: 8px;
+  color: #555;
 }
 
 .doc-tree ul {
@@ -89,8 +90,8 @@ hr {
 }
 
 .doc-tree a {
-  color: #444;
-  text-decoration: none;
+  color: #333;
+  text-decoration: underline;
 }
 
 .doc-tree .nav-dir > a {
