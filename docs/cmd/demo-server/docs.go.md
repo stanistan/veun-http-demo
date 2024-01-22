@@ -79,10 +79,9 @@ func treeView(n docs.Node, current string) veun.AsView {
 		childContent = el.Ul().Content(children...)
 	}
 
-
 	return el.Div().Content(
 		el.Div().Attrs(attrs).Content(elName),
-        childContent,
+		childContent,
 	)
 }
 ```

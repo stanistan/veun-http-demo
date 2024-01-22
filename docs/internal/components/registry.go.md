@@ -1,8 +1,8 @@
 ```go
 import (
-    "runtime"
-    "strings"
-    "path/filepath"
+	"path/filepath"
+	"runtime"
+	"strings"
 
 	"github.com/stanistan/veun"
 )
