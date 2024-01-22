@@ -22,6 +22,7 @@ import (
 type View struct {
 	Nav, Main veun.AsView
 	Title     string
+	IsMobile  bool
 }
 ```
 
@@ -33,10 +34,11 @@ in case this starts to get more complicated.
 var tpl string
 var template = veun.MustParseTemplate("two_column", tpl)
 
-func (v View) View(ctx context.Context) (*veun.View, error) {
+func (v *View) View(ctx context.Context) (*veun.View, error) {
 	return veun.V(veun.Template{
 		Tpl:   template,
 		Slots: veun.Slots{"nav": v.Nav, "main": v.Main},
+		Data:  v,
 	}), nil
 }
 ```
@@ -46,10 +48,12 @@ func (v View) View(ctx context.Context) (*veun.View, error) {
 We can have this view provide a title to the page.
 
 ```go
-func (v View) SetPageData(d *page.Data) {
+func (v *View) SetPageData(d *page.Data) {
     if v.Title != "" {
         d.Title = v.Title
     }
+
+    v.IsMobile = d.IsMobile
 }
 ```
 
@@ -73,6 +77,6 @@ func (h Handler) ViewForRequest(r *http.Request) (veun.AsView, http.Handler, err
 		return nil, nil, err
 	}
 
-	return View{Main: main, Nav: nav, Title: "TEST"}, next, nil
+	return &View{Main: main, Nav: nav, Title: "TEST"}, next, nil
 }
 ```

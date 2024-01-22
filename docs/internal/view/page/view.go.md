@@ -31,6 +31,7 @@ type Data struct {
 	Title    string
 	CSSFiles []string
 	JSFiles  []string
+	IsMobile bool
 }
 ```
 

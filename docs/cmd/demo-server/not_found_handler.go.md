@@ -7,6 +7,7 @@ import (
 	"github.com/stanistan/veun/el"
 	"github.com/stanistan/veun/vhttp/request"
 
+	"github.com/stanistan/veun-http-demo/internal/view/doc_tree"
 	"github.com/stanistan/veun-http-demo/internal/view/two_column"
 )
 ```
@@ -16,9 +17,9 @@ import (
 Repurpose the nav tree and the two-column view to have something that looks ok.
 
 ```go
-var notFoundView veun.AsView = mustMemo(two_column.View{
+var notFoundView veun.AsView = mustMemo(&two_column.View{
 	Title: "404 Not Found",
-	Nav:   docTree(""),
+	Nav:   doc_tree.View(""),
 	Main: el.Article().Content(
 		el.H1().InnerText("404 Not Found"),
 		el.Hr(),

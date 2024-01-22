@@ -8,6 +8,16 @@ a {
   color: blue;
 }
 
+nav details {
+  padding: 8px;
+  border-bottom: 3px solid #f3f3f3;
+  background: #e1e1e1;
+}
+
+nav details summary {
+  text-indent: 2px;
+}
+
 .page-title span {
   display: block;
 }

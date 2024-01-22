@@ -11,6 +11,8 @@ Pretty standard for something dealing with an http request.
 import (
 	"net/http"
 
+	"github.com/mssola/useragent"
+
 	"github.com/stanistan/veun"
 	"github.com/stanistan/veun/vhttp/request"
 )
@@ -32,7 +34,15 @@ func Handler(data Data) func(request.Handler) request.Handler {
         return request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
 ```
 
----
+### Extracting mobile data
+
+The page/css isn't responsive, but we _can_ and do, potentially change
+layouts depending on if the page is mobile or not. We can
+
+```go
+ua := useragent.New(r.UserAgent())
+data.IsMobile = ua.Mobile()
+```
 
 Once again, you can see that when we're looking at any kind of code
 it ends up simply being function/interface composition.

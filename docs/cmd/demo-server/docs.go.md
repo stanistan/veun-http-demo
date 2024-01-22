@@ -10,81 +10,19 @@ import (
 	"net/http"
 	"strings"
 
+    "github.com/mssola/useragent"
+
 	"github.com/stanistan/veun"
 	"github.com/stanistan/veun/el"
 	"github.com/stanistan/veun/vhttp/request"
 
 	static "github.com/stanistan/veun-http-demo/docs"
 	"github.com/stanistan/veun-http-demo/internal/components"
-	"github.com/stanistan/veun-http-demo/internal/docs"
+	"github.com/stanistan/veun-http-demo/internal/view/doc_tree"
 	"github.com/stanistan/veun-http-demo/internal/view/md"
 	"github.com/stanistan/veun-http-demo/internal/view/title"
 	"github.com/stanistan/veun-http-demo/internal/view/two_column"
 )
-```
-
-## Docs Index
-
-We want to make a component that lists out all of the docs
-that we've written, by their filenames so that we can attach
-it to the server.
-
-### Getting the tree
-
-This is in the [`internal/docs`](/docs/internal/docs/tree.md) package.
-
-## Index View
-
-Now that we have the files always available, we can make an index page that includes
-the directory.
-
-We pass in the current url so we can set an active node on the tree.
-
-```go
-func docTree(current string) veun.AsView {
-	return el.Div().Class("doc-tree").Content(
-		treeView(docs.Tree(), current),
-	)
-}
-```
-
-And our tree view function. This is recursive and walks the
-entire tree to build out the nav.
-
-```go
-func treeView(n docs.Node, current string) veun.AsView {
-	childPages := n.SortedKeys()
-	name, href := n.LinkInfo()
-
-	var elName veun.AsView
-	attrs := el.Attrs{}
-	if len(childPages) > 0 {
-		attrs["class"] += " nav-dir"
-	}
-
-	if current == href {
-		elName = el.Text(name + " ↞")
-		attrs["class"] += " current"
-	} else {
-		elName = el.A().Attr("href", href).InnerText(name)
-	}
-
-	var childContent veun.AsView
-	if len(childPages) > 0 {
-		var children []veun.AsView
-		for _, name := range childPages {
-			children = append(children, el.Li().Content(
-				treeView(n.Children[name], current),
-			))
-		}
-		childContent = el.Ul().Content(children...)
-	}
-
-	return el.Div().Content(
-		el.Div().Attrs(attrs).Content(elName),
-		childContent,
-	)
-}
 ```
 
 ## Request Handlers
@@ -95,10 +33,18 @@ the actual HTML page we're going to look at for the indexes.
 #### Home Page
 
 ```go
-var index = request.Always(two_column.View{
-	Title: "veun-http-demo",
-	Nav:   docTree("/"),
-	Main:  el.Article().Content(md.View(static.Index)),
+var index = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.Handler, error) {
+	var (
+		_ = useragent.New(r.UserAgent())
+		tree    = doc_tree.View("/")
+		article = el.Article().Content(md.View(static.Index))
+	)
+
+	return &two_column.View{
+		Title: "veun-http-demo",
+		Nav:   tree,
+		Main:  article,
+	}, nil, nil
 })
 ```
 
@@ -163,8 +109,8 @@ var docsHandler = request.HandlerFunc(func(r *http.Request) (veun.AsView, http.H
         strings.TrimSuffix(strings.TrimPrefix(url, "/"), ".md")+".go.md",
     )
 
-	return two_column.View{
-		Nav:   docTree(rawUrl),
+	return &two_column.View{
+		Nav:   doc_tree.View(rawUrl),
 		Main:  content,
 		Title: rawUrl + " | veun-http-demo",
 	}, nil, nil
