@@ -90,8 +90,9 @@ hr {
 }
 
 .doc-tree a {
-  color: #333;
+  color: #2b2b87;
   text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .doc-tree .nav-dir > a {
