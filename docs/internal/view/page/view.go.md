@@ -2,9 +2,9 @@
 
 This defines the page structure: html element, title, css, js files, etc.
 
-This is one we're we can use both `veun.Template` and `veun/html`. For this,
-we opt to use go templating directly, and of course, we need all of the
-standard business for this.
+This is one we can use both `veun/template` and `veun/el`.
+
+For this, we opt to use go templating directly.
 
 ```go
 import (

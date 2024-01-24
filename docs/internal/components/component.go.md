@@ -63,7 +63,7 @@ func (v component) View(ctx context.Context) (*veun.View, error) {
 }
 ```
 
-The `veun.Template` is reusable so that we can embed it into the
+The `template` is reusable so that we can embed it into the
 [`errorView`](/docs/internal/components/error.md).
 
 ```go

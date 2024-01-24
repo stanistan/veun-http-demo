@@ -23,7 +23,7 @@ import (
 It's actually _very very simple_ to make a trivial wrapper
 around goldmark.
 
-Similar to `veun.Template` we want something that takes our
+Similar to `veun/template.Template` we want something that takes our
 input, and `goldmark` uses `bytes`, and the configuration
 of the library and does what it needs to.
 
