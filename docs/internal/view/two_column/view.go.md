@@ -10,6 +10,7 @@ import (
     "net/http"
 
     "github.com/stanistan/veun"
+    t "github.com/stanistan/veun/template"
     "github.com/stanistan/veun/vhttp/request"
 
     "github.com/stanistan/veun-http-demo/internal/view/page"
@@ -32,12 +33,12 @@ in case this starts to get more complicated.
 ```go
 //go:embed template.tpl
 var tpl string
-var template = veun.MustParseTemplate("two_column", tpl)
+var template = t.MustParse("two_column", tpl)
 
 func (v *View) View(ctx context.Context) (*veun.View, error) {
-	return veun.V(veun.Template{
+	return veun.V(t.Template{
 		Tpl:   template,
-		Slots: veun.Slots{"nav": v.Nav, "main": v.Main},
+		Slots: t.Slots{"nav": v.Nav, "main": v.Main},
 		Data:  v,
 	}), nil
 }

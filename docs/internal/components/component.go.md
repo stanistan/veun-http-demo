@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/stanistan/veun"
+	t "github.com/stanistan/veun/template"
 )
 ```
 
@@ -43,7 +44,7 @@ Our component uses the `component.tpl` in this directory.
 ```go
 //go:embed component.tpl
 var tpl string
-var componentTpl = veun.MustParseTemplate("component", tpl)
+var componentTpl = t.MustParse("component", tpl)
 
 type component struct {
 	Type, Description string
@@ -66,10 +67,10 @@ The `veun.Template` is reusable so that we can embed it into the
 [`errorView`](/docs/internal/components/error.md).
 
 ```go
-func (v component) template() veun.Template {
-	return veun.Template{
+func (v component) template() t.Template {
+	return t.Template{
 		Tpl:   componentTpl,
-		Slots: veun.Slots{"body": v.Body},
+		Slots: t.Slots{"body": v.Body},
 		Data:  v,
 	}
 }

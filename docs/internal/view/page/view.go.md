@@ -12,11 +12,12 @@ import (
 	_ "embed"
 
 	"github.com/stanistan/veun"
+	t "github.com/stanistan/veun/template"
 )
 
 //go:embed template.tpl
 var tpl string
-var template = veun.MustParseTemplate("page", tpl)
+var template = t.MustParse("page", tpl)
 ```
 
 You can see the actual template [here][template-link].
@@ -48,9 +49,9 @@ type view struct {
 }
 
 func (v view) View(_ context.Context) (*veun.View, error) {
-	return veun.V(veun.Template{
+	return veun.V(t.Template{
 		Tpl:   template,
-		Slots: veun.Slots{"body": v.body},
+		Slots: t.Slots{"body": v.body},
 		Data:  v.data,
 	}), nil
 }

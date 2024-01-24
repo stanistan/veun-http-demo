@@ -98,9 +98,9 @@ handler, it's pretty neat.
 
 ```go
 return handler.Checked(
-	mux,                // the ServeMux we've just been adding routes to
-	staticFileServer(), // falls back to the static file server if we 404
-	notFoundHandler(),  // our own custom notFoundHandler
+	mux,                      // the ServeMux we've just been adding routes to
+	staticFileServer(),       // falls back to the static file server if we 404
+	h(html(notFoundHandler)), // our own custom notFoundHandler
 )
 ```
 
