@@ -5,7 +5,7 @@ go 1.21.4
 require (
 	github.com/cespare/reflex v0.3.1
 	github.com/mssola/useragent v1.0.0
-	github.com/stanistan/veun v0.0.0-20240124185844-65fcaabd11de
+	github.com/stanistan/veun v0.0.0-20240124213516-2ec11e61a542
 	github.com/yuin/goldmark v1.6.0
 )
 

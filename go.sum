@@ -21,10 +21,8 @@ github.com/mssola/useragent v1.0.0 h1:WRlDpXyxHDNfvZaPEut5Biveq86Ze4o4EMffyMxmH5
 github.com/mssola/useragent v1.0.0/go.mod h1:hz9Cqz4RXusgg1EdI4Al0INR62kP7aPSRNHnpU+b85Y=
 github.com/ogier/pflag v0.0.1 h1:RW6JSWSu/RkSatfcLtogGfFgpim5p7ARQ10ECk5O750=
 github.com/ogier/pflag v0.0.1/go.mod h1:zkFki7tvTa0tafRvTBIZTvzYyAu6kQhPZFnshFFPE+g=
-github.com/stanistan/veun v0.0.0-20240123163707-bd8889447ae9 h1:a+ZU9Wa4uGT9GuSzC/BcZeZU44cgDculTM2sjgGM6mE=
-github.com/stanistan/veun v0.0.0-20240123163707-bd8889447ae9/go.mod h1:ULO5bcyT9qyVIoFHhho3iaYQYCKjz2ov0sWaYpclZKQ=
-github.com/stanistan/veun v0.0.0-20240124185844-65fcaabd11de h1:7ja5ZvmKhOxUOW14aOvOS2Gf8xBY7CGBTYOZtHaleig=
-github.com/stanistan/veun v0.0.0-20240124185844-65fcaabd11de/go.mod h1:ULO5bcyT9qyVIoFHhho3iaYQYCKjz2ov0sWaYpclZKQ=
+github.com/stanistan/veun v0.0.0-20240124213516-2ec11e61a542 h1:WLIhSo9hQ+OiejLY8axf6/29Y5T0DEEJP/T5eLu63V4=
+github.com/stanistan/veun v0.0.0-20240124213516-2ec11e61a542/go.mod h1:ULO5bcyT9qyVIoFHhho3iaYQYCKjz2ov0sWaYpclZKQ=
 github.com/yuin/goldmark v1.6.0 h1:boZcn2GTjpsynOsC0iJHnBWa4Bi0qzfJjthwauItG68=
 github.com/yuin/goldmark v1.6.0/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e h1:o3PsSEY8E4eXWkXrIP9YJALUkVZqzHJT5DOasTyn8Vs=
