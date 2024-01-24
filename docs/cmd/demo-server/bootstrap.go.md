@@ -12,8 +12,8 @@ main sever implementation from the standard library.
 import (
 	"embed"
 	"log/slog"
-    "os"
 	"net/http"
+	"os"
 )
 ```
 
