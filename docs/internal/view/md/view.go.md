@@ -31,27 +31,34 @@ For our use case, we can make a singleton, and if we really
 want to at some point in the future, make this configurable.
 
 ```go
-var markdown = goldmark.New(
-	goldmark.WithExtensions(extension.GFM),
-)
+var md = goldmark.New(goldmark.WithExtensions(extension.GFM))
 ```
 
 ## Our HTMLRenderable
 
-This _does_ take a `goldmark.Markdown` as an option, it's a
-passthrough struct of input and md converter to produce HTML,
-that's all it takes to make a `veun.HTMLRenderable`.
+This takes a `goldmark.Markdown` as an struct parameter, and
+defaults to our global `md` if it wasn't set.
+
+That's all it takes to make a `veun.HTMLRenderable`.
 
 ```go
-type Markdown struct {
-	Bytes    []byte
-	Markdown goldmark.Markdown
+type view struct {
+	bytes []byte
+	md    goldmark.Markdown
 }
 
-func (m Markdown) AsHTML(_ context.Context) (template.HTML, error) {
+func (v view) AsHTML(_ context.Context) (template.HTML, error) {
+	var r goldmark.Markdown
+	if v.md != nil {
+		r = v.md
+	} else {
+		r = md
+	}
+
 	var out bytes.Buffer
-	if err := m.Markdown.Convert(m.Bytes, &out); err != nil {
-		return template.HTML(""), err
+	if err := r.Convert(v.bytes, &out); err != nil {
+		var empty template.HTML
+		return empty, err
 	}
 
 	return template.HTML(out.String()), nil
@@ -63,15 +70,8 @@ func (m Markdown) AsHTML(_ context.Context) (template.HTML, error) {
 Our view uses just the bytes, and the singleton `markdown`.
 
 ```go
-type view struct {
-	Bytes []byte
-}
-
 func (v view) View(_ context.Context) (*veun.View, error) {
-	return veun.V(Markdown{
-		Bytes:    v.Bytes,
-		Markdown: markdown,
-	}), nil
+    return veun.V(v), nil
 }
 ```
 
@@ -86,7 +86,9 @@ HTML around our generated markdown.
 
 ```go
 func View(bs []byte) veun.AsView {
-    return el.Div().Class("md").Content(view{Bytes: bs})
+	return el.Div().Attr("class", "md").Content(
+		view{bytes: bs},
+	)
 }
 ```
 
