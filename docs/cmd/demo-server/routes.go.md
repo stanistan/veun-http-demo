@@ -72,6 +72,8 @@ mux.Handle("/e/text", h(request.Always(el.Div().Content(
 ))))
 ```
 
+Example not-found route:
+
 ```go
 mux.Handle("/e/not_found", h(request.Always(notFoundView)))
 ```
@@ -109,4 +111,3 @@ Closing `server`:
 ```go
 }
 ```
-
