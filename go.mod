@@ -1,6 +1,6 @@
 module github.com/stanistan/veun-http-demo
 
-go 1.21.4
+go 1.21.6
 
 require (
 	github.com/cespare/reflex v0.3.1
