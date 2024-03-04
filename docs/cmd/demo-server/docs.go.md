@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/el-exp"
+	"github.com/stanistan/veun/el"
 	"github.com/stanistan/veun/vhttp/request"
 
 	"github.com/stanistan/veun-http-demo/docs"

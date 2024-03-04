@@ -21,8 +21,8 @@ github.com/mssola/useragent v1.0.0 h1:WRlDpXyxHDNfvZaPEut5Biveq86Ze4o4EMffyMxmH5
 github.com/mssola/useragent v1.0.0/go.mod h1:hz9Cqz4RXusgg1EdI4Al0INR62kP7aPSRNHnpU+b85Y=
 github.com/ogier/pflag v0.0.1 h1:RW6JSWSu/RkSatfcLtogGfFgpim5p7ARQ10ECk5O750=
 github.com/ogier/pflag v0.0.1/go.mod h1:zkFki7tvTa0tafRvTBIZTvzYyAu6kQhPZFnshFFPE+g=
-github.com/stanistan/veun v0.0.0-20240304174317-76755c49858a h1:Q2QQsU6ghHe72gIOY8cbBPoFVB1/k2rJWxS2GphLQEw=
-github.com/stanistan/veun v0.0.0-20240304174317-76755c49858a/go.mod h1:ULO5bcyT9qyVIoFHhho3iaYQYCKjz2ov0sWaYpclZKQ=
+github.com/stanistan/veun v0.0.0-20240304213207-5579f71efc09 h1:JuzdkmmMUh4HuBh2KccFTR0QK2UlBGBOflnfpm+8nq8=
+github.com/stanistan/veun v0.0.0-20240304213207-5579f71efc09/go.mod h1:ULO5bcyT9qyVIoFHhho3iaYQYCKjz2ov0sWaYpclZKQ=
 github.com/yuin/goldmark v1.6.0 h1:boZcn2GTjpsynOsC0iJHnBWa4Bi0qzfJjthwauItG68=
 github.com/yuin/goldmark v1.6.0/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e h1:o3PsSEY8E4eXWkXrIP9YJALUkVZqzHJT5DOasTyn8Vs=
