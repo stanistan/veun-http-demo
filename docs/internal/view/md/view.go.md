@@ -11,7 +11,7 @@ import (
 	"html/template"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/el"
+	"github.com/stanistan/veun/el-exp"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
@@ -86,9 +86,10 @@ HTML around our generated markdown.
 
 ```go
 func View(bs []byte) veun.AsView {
-	return el.Div().Attr("class", "md").Content(
-		view{bytes: bs},
-	)
+    return el.Div{
+        el.Class("md"),
+        el.Content{view{bytes: bs}},
+    }
 }
 ```
 

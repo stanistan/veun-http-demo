@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/el"
+	"github.com/stanistan/veun/el-exp"
 	"github.com/stanistan/veun/vhttp/request"
 
 	"github.com/stanistan/veun-http-demo/docs"
@@ -34,7 +34,7 @@ the actual HTML page we're going to look at for the indexes.
 var index = request.Always(&two_column.View{
     Title: "veun-http-demo",
     Nav:   doc_tree.View("/"),
-    Main:  el.Article().Content(md.View(docs.Index)),
+    Main:  el.Article{el.Content{md.View(docs.Index)}},
 })
 ```
 
@@ -92,11 +92,11 @@ func docPageContent(currentUrl, pathToFile string) veun.AsView {
         content = veun.Views{component, content}
     }
 
-    return el.Article().Content(
+    return el.Article{
         title.View(currentUrl),
-        el.Hr(),
-        content,
-    )
+        el.Hr{},
+        el.Content{content},
+    }
 }
 ```
 

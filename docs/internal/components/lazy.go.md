@@ -1,3 +1,7 @@
+When building websites, sometimes it's really nice
+to have the chunk of the page load _lazilly_ and _separately_
+from everything else.
+
 ```go
 import (
 	"context"
@@ -5,15 +9,11 @@ import (
 	"fmt"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/el"
+	"github.com/stanistan/veun/el-exp"
 )
 ```
 
 ## Lazy Loading
-
-When building websites, sometimes it's really nice
-to have the chunk of the page load _lazilly_ and _separately_
-from everything else.
 
 We have [htmx][htmx] loaded client side, so we can leverage that
 and plain old http/html responses to accomplish this.
@@ -34,14 +34,14 @@ How does this render?
 
 ```go
 func (v Lazy) View(ctx context.Context) (*veun.View, error) {
-    if v.URL == "" {
-        return nil, errors.New("no url")
-    }
+	if v.URL == "" {
+		return nil, errors.New("no url")
+	}
 
-    return el.Div().
-        Attrs(v.htmxAttrs()).
-        Content(v.placeholder()).
-        View(ctx)
+	return el.Div{
+		v.htmxAttrs(),
+		el.Content{v.placeholder()},
+	}.View(ctx)
 }
 ```
 
@@ -62,7 +62,7 @@ And a default placeholder:
 ```go
 func (v Lazy) placeholder() veun.AsView {
     if v.Placeholder == nil {
-        return el.Em().InnerText("...loading...")
+        return el.Em{el.Text("...loading...")}
     } else {
         return v.Placeholder
     }
@@ -81,7 +81,7 @@ func (v Lazy) Description() string {
 }
 ```
 
-## registering it
+## what our components show it
 
 ```go
 func init() {

@@ -3,7 +3,7 @@ import (
 	"context"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/el"
+	"github.com/stanistan/veun/el-exp"
 )
 ```
 
@@ -19,11 +19,18 @@ type errorHandler struct {
 }
 
 func (e errorHandler) ViewForError(ctx context.Context, err error) (veun.AsView, error) {
-    c := e.c
-    c.Body = errorBody("Error Captured by component:", err.Error())
-    c.Type = e.c.Type + " !!FAILED!!"
-    c.BodyClass = "error"
-    return errorView{c: c}, nil
+	return errorView{
+		c: component{
+			// 1. Replace the body of the component with an error
+			Body: errorBody("Error Captured by component:", err.Error()),
+			// 2. Add a css class
+			BodyClass: "error",
+			// 3. Change the type to indicate an error as well
+			Type: e.c.Type + " !!FAILED!!",
+            // 4. Keep the rest...
+            Description: e.c.Description,
+		},
+	}, nil
 }
 ```
 
@@ -47,9 +54,9 @@ And our error body:
 
 ```go
 func errorBody(title, content string) veun.AsView {
-	return el.Div().Content(
-		el.Strong().InnerText(title),
-		el.P().InnerText(content),
-	)
+    return el.Div{
+        el.Strong{el.Text(title)},
+        el.P{el.Text(content)},
+    }
 }
 ```

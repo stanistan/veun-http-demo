@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/stanistan/veun"
-	"github.com/stanistan/veun/el"
+	"github.com/stanistan/veun/el-exp"
 	"github.com/stanistan/veun/vhttp/handler"
 	"github.com/stanistan/veun/vhttp/request"
 
@@ -23,12 +23,18 @@ Repurpose the nav tree and the two-column view to have something that looks ok.
 var notFoundView veun.AsView = veun.MustMemo(&two_column.View{
 	Title: "404 Not Found",
 	Nav:   doc_tree.View(""),
-	Main: el.Article().Content(
-		el.H1().InnerText("404 Not Found"),
-		el.Hr(),
-		el.A().Attr("href", "/").InnerText("/ go home").In(el.P()),
-		el.P().InnerText("The content you were looking for was not found."),
-	),
+	Main: el.Article{
+		el.H1{
+			el.Text("404 Not Found"),
+		},
+		el.Hr{},
+		el.P{
+			el.A{el.Href("/"), el.Text("/ go home")},
+		},
+		el.P{
+			el.Text("The content you were looking for was not found."),
+		},
+	},
 })
 ```
 

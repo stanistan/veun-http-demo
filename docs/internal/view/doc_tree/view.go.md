@@ -1,7 +1,7 @@
 ```go
 import (
     "github.com/stanistan/veun"
-    "github.com/stanistan/veun/el"
+    "github.com/stanistan/veun/el-exp"
 
 	"github.com/stanistan/veun-http-demo/internal/docs"
 )
@@ -24,9 +24,10 @@ We pass in the current url so we can set an active node on the tree.
 
 ```go
 func View(current string) veun.AsView {
-	return el.Div().Class("doc-tree").Content(
-		treeView(docs.Tree(), current),
-	)
+    return el.Div{
+        el.Class("doc-tree"),
+        treeView(docs.Tree(), current),
+    }
 }
 ```
 
@@ -34,37 +35,40 @@ And our tree view function. This is recursive and walks the
 entire tree to build out the nav.
 
 ```go
-func treeView(n docs.Node, current string) veun.AsView {
+func treeView(n docs.Node, current string) el.Div {
 	childPages := n.SortedKeys()
 	name, href := n.LinkInfo()
 	attrs := el.Attrs{}
 
-	var elName veun.AsView
+	var elName el.Param
 	if len(childPages) == 0 || name == "/" {
-        elName = el.A().Attr("href", href).InnerText(name)
+		elName = el.A{
+			el.Attr{"href", href},
+			el.Text(name),
+		}
 	} else {
 		elName = el.Text(name)
-    }
+	}
 
 	if current == href {
 		elName = el.Text(name + " ↞")
 		attrs["class"] += " current"
 	}
 
-	var childContent veun.AsView
+	var childContent el.Param = el.Fragment{}
 	if len(childPages) > 0 {
-		var children []veun.AsView
+		var children []el.Param
 		for _, name := range childPages {
-			children = append(children, el.Li().Content(
+			children = append(children, el.Li{
 				treeView(n.Children[name], current),
-			))
+			})
 		}
-		childContent = el.Ul().Content(children...)
+		childContent = el.Ul(children)
 	}
 
-	return el.Div().Content(
-		el.Div().Attrs(attrs).Content(elName),
+	return el.Div{
+		el.Div{attrs, elName},
 		childContent,
-	)
+	}
 }
 ```

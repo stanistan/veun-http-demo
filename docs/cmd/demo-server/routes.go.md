@@ -2,7 +2,7 @@
 import (
 	"net/http"
 
-	"github.com/stanistan/veun/el"
+	"github.com/stanistan/veun/el-exp"
 	"github.com/stanistan/veun/vhttp"
 	"github.com/stanistan/veun/vhttp/handler"
 	"github.com/stanistan/veun/vhttp/request"
@@ -66,10 +66,12 @@ mux.Handle("/docs/", h(html(docsHandler)))
 #### Pages for lazy loading
 
 ```go
-mux.Handle("/e/text", h(request.Always(el.Div().Content(
-    el.Em().InnerText("text output,").In(el.P()),
-    el.P().InnerText("and more of it"),
-))))
+mux.Handle("/e/text", h(request.Always(
+    el.Div{
+        el.P{el.Em{el.Text("text output,")}},
+        el.P{el.Text("and more of it")},
+    },
+)))
 ```
 
 Example not-found route:

@@ -2,7 +2,7 @@
 import (
     "path/filepath"
 
-    "github.com/stanistan/veun/el"
+    "github.com/stanistan/veun/el-exp"
 )
 ```
 
@@ -10,13 +10,17 @@ I want to have a bread-crumby title view that's friendlier to
 mobile clients.
 
 ```go
-func View(urlPath string) *el.Element {
+func View(urlPath string) el.Div {
 	dir, file := filepath.Split(urlPath)
-	return el.Div().Class("page-title").Content(
-		el.H1().Content(
-			el.Span().InnerText(file),
-			el.Span().Class("sub-title").InnerText("in: "+dir),
-		),
-	)
+    return el.Div{
+        el.Class("page-title"),
+        el.H1{
+            el.Span{el.Text(file)},
+            el.Span{
+                el.Class("sub-title"),
+                el.Text("in: " + dir),
+            },
+        },
+    }
 }
 ```
